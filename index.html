@@ -185,14 +185,16 @@ section.active { display:block; }
     <p>We bring you handpicked timeless collections from vintage watches, clocks, and lighting.</p>
   </section>
 
+  <!-- Contact Page with Feedback -->
   <section id="contact">
     <h2>Contact Us</h2>
-    <form>
-      <input type="text" placeholder="Your Name" required>
-      <input type="email" placeholder="Your Email" required>
-      <textarea placeholder="Message" required></textarea>
+    <form id="contactForm">
+      <input type="text" id="contactName" placeholder="Your Name" required>
+      <input type="email" id="contactEmail" placeholder="Your Email" required>
+      <textarea id="contactMessage" placeholder="Message" required></textarea>
       <button type="submit">Send</button>
       <p>If any issues, email us at <strong>support@vintagestore.com</strong></p>
+      <p id="contactFeedback" style="color:green; font-weight:bold; display:none;"></p>
     </form>
   </section>
 </main>
@@ -204,18 +206,18 @@ const firebaseConfig = {
   apiKey: "AIzaSyA8xmP1860A5XtWzlFcIWqY1jSl3dN2cME",
   authDomain: "vintage-products-ce5dc.firebaseapp.com",
   projectId: "vintage-products-ce5dc",
-  storageBucket: "vintage-products-ce5dc.firebasestorage.app",
+  storageBucket: "vintage-products-ce5dc.appspot.com",
   messagingSenderId: "20067314983",
   appId: "1:20067314983:web:5d209cf0775937b532cd02",
   measurementId: "G-L8P96QDLC0"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db = firebase.firestore(); 
+const db = firebase.firestore();
 
 // Show Login/Register
-function showRegister() { document.getElementById('login-container').style.display='none'; document.getElementById('register-container').style.display='block'; }
-function showLogin() { document.getElementById('login-container').style.display='block'; document.getElementById('register-container').style.display='none'; }
+function showRegister(){ document.getElementById('login-container').style.display='none'; document.getElementById('register-container').style.display='block'; }
+function showLogin(){ document.getElementById('login-container').style.display='block'; document.getElementById('register-container').style.display='none'; }
 
 // Firebase Auth
 document.getElementById('loginForm').addEventListener('submit', e=>{
@@ -226,7 +228,6 @@ document.getElementById('loginForm').addEventListener('submit', e=>{
       .then(()=> { document.getElementById('login-container').style.display='none'; document.getElementById('store-content').style.display='block'; })
       .catch(err=>alert(err.message));
 });
-
 document.getElementById('registerForm').addEventListener('submit', e=>{
   e.preventDefault();
   const email=document.getElementById('regEmail').value;
@@ -237,12 +238,11 @@ document.getElementById('registerForm').addEventListener('submit', e=>{
 });
 
 // Logout
-function logout() { auth.signOut().then(()=>{ alert("Logged out"); location.reload(); }); }
+function logout(){ auth.signOut().then(()=>{ alert("Logged out"); location.reload(); }); }
 
 // Store Functions
 let cart=[];
 let buyList=[];
-
 function showPage(pageId){
   document.querySelectorAll("#store-content main section").forEach(sec=>sec.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
@@ -297,10 +297,8 @@ function buyProduct(button){
 
   showBuySummary();
 }
-
 function showBuySummary(){
   document.querySelectorAll("#store-content main section").forEach(sec => sec.classList.remove("active"));
-
   let summarySection = document.getElementById("buy-summary");
   if(!summarySection){
     summarySection = document.createElement("section");
@@ -328,7 +326,6 @@ function showBuySummary(){
   });
   document.getElementById("buy-total").innerText = `Total: ₹${total}`;
 }
-
 function pay(method){
   if(method === 'Online'){
     let onlineOption = prompt("Choose payment app: GPay, Razorpay, Paytm");
@@ -344,6 +341,35 @@ function pay(method){
 auth.onAuthStateChanged(user=>{
   if(user){ document.getElementById('login-container').style.display='none'; document.getElementById('store-content').style.display='block'; }
   else { document.getElementById('login-container').style.display='block'; document.getElementById('store-content').style.display='none'; }
+});
+
+// Contact Form Submission with success message
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("contactName").value;
+  const email = document.getElementById("contactEmail").value;
+  const message = document.getElementById("contactMessage").value;
+  const feedback = document.getElementById("contactFeedback");
+
+  db.collection("queries").add({
+    name: name,
+    email: email,
+    message: message,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    feedback.innerText = "✅ Your query has been submitted successfully!";
+    feedback.style.display = "block";
+    document.getElementById("contactForm").reset();
+    setTimeout(() => { feedback.style.display = "none"; }, 5000);
+  })
+  .catch(error => {
+    feedback.innerText = "❌ Error submitting query: " + error.message;
+    feedback.style.color = "red";
+    feedback.style.display = "block";
+    setTimeout(() => { feedback.style.display = "none"; feedback.style.color = "green"; }, 5000);
+  });
 });
 </script>
 </body>
