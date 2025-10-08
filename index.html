@@ -145,34 +145,96 @@ section.active { display:block; }
   </section>
 
   <section id="products">
-    <h2>Our Products</h2>
-    <div id="productsGrid" class="products-grid">
-      <div class="card" data-name="Handmade Watch" data-price="1200" data-category="watches">
-        <img src="https://img0.etsystatic.com/027/0/7172877/il_fullxfull.613412924_rr1t.jpg" alt="Watch">
-        <h3>Handmade Watch</h3>
-        <p>Price: ₹1200</p>
-        <label>Quantity: <input type="number" value="1" min="1"></label>
-        <button onclick="addToCart(this)">Add to Cart</button>
-        <button onclick="buyProduct(this)">Buy Now</button>
-      </div>
-      <div class="card" data-name="Wooden Clock" data-price="2200" data-category="clocks">
-        <img src="https://arttales.in/cdn/shop/files/Bonded_Tops_Wall_Clock__1.jpg?v=1736769787&width=1946" alt="Clock">
-        <h3>Wooden Clock</h3>
-        <p>Price: ₹2200</p>
-        <label>Quantity: <input type="number" value="1" min="1"></label>
-        <button onclick="addToCart(this)">Add to Cart</button>
-        <button onclick="buyProduct(this)">Buy Now</button>
-      </div>
-      <div class="card" data-name="Vintage Light" data-price="1800" data-category="lights">
-        <img src="https://images-cdn.ubuy.co.in/64ef835472399f1a867b7a66-wonder-garden-outdoor-string-lights-with.jpg" alt="Light">
-        <h3>Vintage Light</h3>
-        <p>Price: ₹1800</p>
-        <label>Quantity: <input type="number" value="1" min="1"></label>
-        <button onclick="addToCart(this)">Add to Cart</button>
-        <button onclick="buyProduct(this)">Buy Now</button>
-      </div>
+  <h2>Our Products</h2>
+  <div id="productsGrid" class="products-grid">
+
+    <!-- Watches -->
+    <div class="card" data-name="Handmade Watch" data-price="1200" data-category="watches">
+      <img src="https://img0.etsystatic.com/027/0/7172877/il_fullxfull.613412924_rr1t.jpg" alt="Watch">
+      <h3>Handmade Watch</h3>
+      <p>Price: ₹1200</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
     </div>
-  </section>
+
+    <div class="card" data-name="Classic Leather Watch" data-price="1500" data-category="watches">
+      <img src="https://cdn.shopclues.com/images/thumbnails/41213/320/320/95689287948394988200470479217806722847465339034BROWNVINTAGEBUTTERFLY14060314941412532461142056189214335059191434823951144101439914667546031468670639.jpg" alt="Classic Leather Watch">
+      <h3>Classic Leather Watch</h3>
+      <p>Price: ₹1500</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+    <div class="card" data-name="Vintage Gold Watch" data-price="2500" data-category="watches">
+      <img src="https://i.etsystatic.com/7896385/r/il/b86ffb/5588632983/il_570xN.5588632983_7vdy.jpg" alt="Vintage Gold Watch">
+      <h3>Vintage Gold Watch</h3>
+      <p>Price: ₹2500</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+    <!-- Clocks -->
+    <div class="card" data-name="Wooden Clock" data-price="2200" data-category="clocks">
+      <img src="https://arttales.in/cdn/shop/files/Bonded_Tops_Wall_Clock__1.jpg?v=1736769787&width=1946" alt="Clock">
+      <h3>Wooden Clock</h3>
+      <p>Price: ₹2200</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+    <div class="card" data-name="Retro Metal Clock" data-price="2000" data-category="clocks">
+      <img src="https://5.imimg.com/data5/ANDROID/Default/2024/2/389626137/CS/FV/TC/3435492/product-jpeg.jpg" alt="Retro Metal Clock">
+      <h3>Retro Metal Clock</h3>
+      <p>Price: ₹2000</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+    <div class="card" data-name="Antique Wall Clock" data-price="2600" data-category="clocks">
+      <img src="https://m.media-amazon.com/images/I/61H-wJdLSxL._UF894,1000_QL80_.jpg" alt="Antique Wall Clock">
+      <h3>Antique Wall Clock</h3>
+      <p>Price: ₹2600</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+    <!-- Lights -->
+    <div class="card" data-name="Vintage Light" data-price="1800" data-category="lights">
+      <img src="https://images-cdn.ubuy.co.in/64ef835472399f1a867b7a66-wonder-garden-outdoor-string-lights-with.jpg" alt="Light">
+      <h3>Vintage Light</h3>
+      <p>Price: ₹1800</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+    <div class="card" data-name="Rustic Pendant Light" data-price="2100" data-category="lights">
+      <img src="https://www.bulbsquare.com/cdn/shop/products/O1CN011dDNeS2A0d2TkGCYv___2210947598141-0-cib_720x.jpg?v=1739615949" alt="Rustic Pendant Light">
+      <h3>Rustic Pendant Light</h3>
+      <p>Price: ₹2100</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+    <div class="card" data-name="Classic Lantern Light" data-price="1900" data-category="lights">
+      <img src="https://m.media-amazon.com/images/I/71AtYXI4V-L.jpg" alt="Classic Lantern Light">
+      <h3>Classic Lantern Light</h3>
+      <p>Price: ₹1900</p>
+      <label>Quantity: <input type="number" value="1" min="1"></label>
+      <button onclick="addToCart(this)">Add to Cart</button>
+      <button onclick="buyProduct(this)">Buy Now</button>
+    </div>
+
+  </div>
+</section>
+
 
   <section id="cart">
     <h2>Your Cart</h2>
@@ -181,8 +243,12 @@ section.active { display:block; }
   </section>
 
   <section id="about">
-    <h2>About Vintage Store</h2>
-    <p>We bring you handpicked timeless collections from vintage watches, clocks, and lighting.</p>
+    <h2>About our Vintage Store</h2>
+    <p>Step into Vintage Store, where every piece tells a timeless story.
+From classic watches and antique clocks to elegant lighting and décor, we bring the charm of the past to today’s lifestyle.
+Each product is carefully handpicked for its authenticity, quality, and craftsmanship.
+Enjoy a seamless shopping experience with secure online payments and fast doorstep delivery.
+Discover treasures that never fade — because style, like memories, never gets old.</p>
   </section>
 
   <!-- Contact Page with Feedback -->
@@ -326,13 +392,56 @@ function showBuySummary(){
   });
   document.getElementById("buy-total").innerText = `Total: ₹${total}`;
 }
-function pay(method){
-  if(method === 'Online'){
-    let onlineOption = prompt("Choose payment app: GPay, Razorpay, Paytm");
-    if(onlineOption) alert(`Payment successful via ${onlineOption}! Thanks for buying!`);
-  } else {
+// Updated Payment Function with clickable options
+function pay(method) {
+  if (method === 'Online') {
+    // Create popup overlay
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.background = 'rgba(0,0,0,0.5)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = '2000';
+
+    // Add payment buttons
+    modal.innerHTML = `
+      <div style="
+        background:white; 
+        padding:30px; 
+        border-radius:15px; 
+        text-align:center; 
+        max-width:350px; 
+        box-shadow:0 6px 15px rgba(0,0,0,0.2);
+      ">
+        <h3>Choose Payment Method</h3>
+        <button style="margin:10px; padding:10px 20px; background:#4285f4; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="completePayment('GPay')">GPay</button>
+        <button style="margin:10px; padding:10px 20px; background:#0f9d58; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="completePayment('Paytm')">Paytm</button>
+        <button style="margin:10px; padding:10px 20px; background:#ff5722; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="completePayment('Razorpay')">Razorpay</button>
+        <br><br>
+        <button style="padding:8px 15px; background:gray; color:white; border:none; border-radius:5px; cursor:pointer;" onclick="document.body.removeChild(this.parentElement.parentElement)">Cancel</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  } 
+  else {
     alert("You chose offline payment. Your order is placed! Thanks for buying!");
+    buyList = [];
+    showPage('home');
   }
+}
+
+// Handle payment completion
+function completePayment(option) {
+  alert(`✅ Payment successful via ${option}! Thanks for buying!`);
+  // Close popup
+  document.querySelectorAll('body > div').forEach(div => {
+    if (div.style && div.style.position === 'fixed') div.remove();
+  });
   buyList = [];
   showPage('home');
 }
