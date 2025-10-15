@@ -1,94 +1,739 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Vintage Store</title>
-
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
 <style>
-body { font-family: Arial,sans-serif; margin:0; background:#fdf6f0; color:#333; }
-header { background: linear-gradient(45deg, teal, darkcyan); color:white; padding:15px; position:fixed; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; z-index:1000; }
-nav a, .logout-btn { margin:0 10px; color:white; text-decoration:none; font-weight:bold; cursor:pointer; }
-nav a:hover, .logout-btn:hover { text-decoration:underline; }
-main { padding:120px 20px 40px; }
+/* ---------- base with vintage background IMAGE ---------- */
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  margin:0;
+  background-image:
+    url('https://cdn.photoroom.com/v2/image-cache?path=gs://background-7ef44.appspot.com/backgrounds_v3/vintage/46_vintage.jpg'),
+    linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.3));
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  color:#2b2420;
+  min-height: 100vh;
+  position: relative;
+}
+/* HIDE floating words */
+.vintage-layer, .floating-word { display: none !important; }
+header {
+  background: linear-gradient(45deg, rgba(0,128,128,0.95), rgba(0,139,139,0.95));
+  color:white;
+  padding:12px 15px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+}
+header h2 { margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px }
+nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+nav a, .logout-btn {
+  margin:2px 4px;
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  cursor:pointer;
+  font-size:0.9rem;
+  padding:4px 8px;
+  border-radius:4px;
+  transition: background 0.2s;
+}
+nav a:hover, .logout-btn:hover {
+  background: rgba(255,255,255,0.2);
+  text-decoration:none;
+}
+main { padding:80px 15px 20px; }
 section { display:none; }
 section.active { display:block; }
-
-/* Login/Register Forms */
+/* ---------- login/register ---------- */
 #login-container, #register-container {
-  max-width:400px; margin:120px auto; padding:30px; background:white; border-radius:15px; box-shadow:0 6px 18px rgba(0,0,0,0.15);
+  max-width:400px;
+  margin:100px auto;
+  padding:25px;
+  background:rgba(255,255,255,0.8);
+  border-radius:14px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(255,255,255,0.3);
 }
-#login-container h2, #register-container h2 { text-align:center; margin-bottom:20px; }
-#login-container input, #register-container input { width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ccc; }
-#login-container button, #register-container button { width:100%; padding:10px; border:none; border-radius:5px; background:teal; color:white; cursor:pointer; }
-#login-container button:hover, #register-container button:hover { background:darkcyan; }
-#login-container p, #register-container p { text-align:center; margin-top:10px; }
-
-/* Home Page */
-#home.active { 
-  min-height:100vh; 
-  background:linear-gradient(135deg, #f7e9d7, #f4d9e0, #d7e8f7); 
-  padding:50px 20px; 
-  text-align:center; 
-  animation:fadeIn 1s ease-in-out; 
-  display:flex; 
-  flex-direction:column; 
+#login-container h2, #register-container h2 {
+  text-align:center;
+  margin-bottom:18px;
+  color:#2b2420;
+  font-family: Georgia, serif;
+}
+#login-container input, #register-container input {
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #d4c8a8;
+  background:rgba(255,255,255,0.9);
+  box-sizing: border-box;
+}
+#login-container button, #register-container button {
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:linear-gradient(45deg, teal, darkcyan);
+  color:white;
+  cursor:pointer;
+  font-weight:600;
+  font-family: inherit;
+}
+#login-container button:hover, #register-container button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,128,128,0.3);
+}
+#login-container p, #register-container p { text-align:center; margin-top:15px; }
+#login-container p a { color: teal; }
+/* ---------- HOME PAGE - VERTICAL CONTAINERS WITH HORIZONTAL CATEGORY CARDS ---------- */
+#home.active {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 15px;
+  gap: 20px;
+}
+.home-hero, .home-search-section, .home-categories {
+  width: 100%;
+  max-width: 1200px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  border: 2px solid rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+  box-sizing: border-box;
+  text-align: center;
+}
+.home-hero {
+  padding: 40px 30px;
+}
+.home-search-section {
+  padding: 30px;
+}
+.home-categories {
+  padding: 30px 15px;
+}
+#home h2 {
+  font-size: 2.8rem;
+  margin: 20px 0;
+  color:#2b2420;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  font-family: Georgia, serif;
+  letter-spacing: 1.5px;
+}
+#home p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color:#3b332d;
+  line-height: 1.6;
+  padding: 0 15px;
+}
+#search-row {
+  display:flex;
+  gap:15px;
   align-items:center;
   justify-content:center;
+  margin:20px 0;
+  flex-wrap: wrap;
 }
-#home h2 { font-size:2.5rem; margin-bottom:15px; }
-#home p { font-size:1.2rem; margin-bottom:30px; }
-
-.category-options { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; width:100%; max-width:1200px; margin:0 auto; }
-.category-card { background:white; border-radius:15px; padding:20px; text-align:center; cursor:pointer; transition: transform 0.2s, box-shadow 0.3s; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-.category-card:hover { transform:translateY(-5px); box-shadow:0 6px 15px rgba(0,0,0,0.2); }
-.category-card img { width:120px; height:120px; object-fit:cover; border-radius:50%; margin-bottom:15px; border:3px solid teal; background:linear-gradient(135deg,#f3e5d0,#e7d9c8); padding:8px; }
-
-/* Products Grid */
-.products-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:30px; padding:20px; }
-.card { background:#fffaf5; border:none; border-radius:15px; padding:20px; text-align:center; box-shadow:0 6px 18px rgba(0,0,0,0.15); transition: transform 0.2s ease, box-shadow 0.2s ease; }
-.card:hover { transform:translateY(-8px); box-shadow:0 12px 28px rgba(0,0,0,0.25); }
-.card img { width:100%; height:220px; object-fit:cover; border-radius:12px; margin-bottom:15px; background:linear-gradient(135deg,#f3e5d0,#e7d9c8); padding:8px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.15); }
-.card button { margin-top:5px; padding:8px 12px; border:none; border-radius:5px; cursor:pointer; }
-.card button:first-of-type { background:teal; color:white; }
-.card button:first-of-type:hover { background:darkcyan; }
-.card button:last-of-type { background:orange; color:white; margin-left:5px; }
-.card button:last-of-type:hover { background:darkorange; }
-
-/* Cart */
-#cart-items, #buy-items { display:flex; flex-direction:column; gap:15px; }
-.cart-item { background:white; border:1px solid #ddd; border-radius:10px; padding:15px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-.cart-item button { background:crimson;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer; }
-.cart-item button:hover { background:darkred; }
-#cart-total, #buy-total { margin-top:20px; font-size:1.2rem; font-weight:bold; }
-
-/* Contact Page */
-#contact { 
-  padding:60px 20px; 
-  max-width:800px; 
-  margin:0 auto; 
-  background:#fef8f0; 
-  border-radius:15px; 
-  box-shadow:0 6px 15px rgba(0,0,0,0.1); 
+#searchInput {
+  padding: 18px 28px;
+  width: 450px;
+  max-width: 80vw;
+  border-radius: 28px;
+  border: 2px solid #cfc4b3;
+  background: rgba(255,255,255,1);
+  color: #2e2b26;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
-#contact h2 { font-size:2rem; margin-bottom:30px; text-align:center; }
-#contact form { display:flex; flex-direction:column; gap:20px; }
-#contact input, #contact textarea { padding:15px; border-radius:8px; border:1px solid #ccc; font-size:1rem; width:100%; }
-#contact textarea { min-height:150px; }
-#contact button { padding:12px; border:none; border-radius:8px; background:teal; color:white; font-size:1rem; cursor:pointer; }
-#contact button:hover { background:darkcyan; }
-#contact p { margin-top:15px; font-size:1rem; text-align:center; }
-
-@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+#searchInput:focus {
+  outline: none;
+  border-color: teal;
+  box-shadow: 0 0 0 3px rgba(0,128,128,0.2), 0 10px 30px rgba(0,0,0,0.15);
+  transform: scale(1.02);
+}
+#voice-btn {
+  background: rgba(255,255,255,1);
+  border:2px solid #cfc4b3;
+  color:#3b332d;
+  padding:16px;
+  border-radius: 50%;
+  cursor:pointer;
+  font-weight:600;
+  min-width: 60px;
+  height: 60px;
+  font-size: 22px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transition: all 0.3s;
+}
+#voice-btn.listening {
+  background: #ff6868;
+  box-shadow: 0 0 25px rgba(255,104,104,0.8);
+  color:#fff;
+  transform: scale(1.08);
+}
+/* CATEGORY CARDS - HORIZONTAL LINE */
+.category-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.category-card {
+  background: rgba(255,255,255,0.8);
+  color: #2e2b26;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.16);
+  border: 2px solid rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+  min-width: 180px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.category-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+}
+.category-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  border: 4px solid #7aa6a6;
+  padding: 5px;
+  background: linear-gradient(135deg, #f3e5d0, #e7d9c8);
+}
+.category-card h3 {
+  margin: 8px 0 0;
+  font-size: 1.2rem;
+}
+/* PAYMENT MODAL */
+#paymentModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+#paymentModal.show {
+  display: flex;
+}
+.payment-content {
+  background: rgba(255,255,255,0.8);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.8);
+  backdrop-filter: blur(10px);
+}
+.payment-content h3 {
+  color: #2b2420;
+  margin-bottom: 20px;
+  font-family: Georgia, serif;
+}
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+.payment-option {
+  padding: 15px;
+  border: 2px solid #d4c8a8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: rgba(255,255,255,0.9);
+}
+.payment-option:hover, .payment-option.selected {
+  border-color: teal;
+  background: linear-gradient(45deg, rgba(0,128,128,0.1), rgba(0,139,139,0.1));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,128,128,0.2);
+}
+.payment-option input[type="radio"] {
+  margin-right: 10px;
+}
+#confirmPayment {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 15px;
+}
+#confirmPayment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+}
+/* Search not found message */
+#search-not-found, #products-search-not-found {
+  display: none;
+  background: rgba(255,255,255,0.8);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  margin: 30px auto;
+  max-width: 700px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+  border: 2px solid rgba(255,255,255,0.7);
+}
+#search-not-found.show, #products-search-not-found.show {
+  display: block;
+  animation: fadeIn 0.5s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+#search-not-found h3, #products-search-not-found h3 {
+  color: #d9534f;
+  margin: 0 0 10px 0;
+  font-family: Georgia, serif;
+}
+#search-not-found p, #products-search-not-found p {
+  color: #6c757d;
+  margin: 0;
+}
+#products-search-not-found button {
+  background: linear-gradient(45deg, teal, darkcyan);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+/* ---------- PRODUCTS GRID - SMALLER WITH MORE SPACING ---------- */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 20px;
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 200px);
+}
+.card {
+  background: rgba(255,255,255,0.8);
+  border: none;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.4);
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  min-height: 280px;
+}
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+.card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #f3e5d0, #e7d9c8);
+  padding: 5px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.card h3 {
+  color: #2b2420;
+  margin: 6px 0;
+  font-size: 0.95rem;
+  flex-grow: 1;
+}
+.card p {
+  color: #5a3d2e;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+.card input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #d4c8a8;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.card button {
+  margin: 3px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.card button:first-of-type {
+  background: linear-gradient(45deg, #6aa19a, #5a9a8a);
+  color: white;
+}
+.card button:first-of-type:hover {
+  background: linear-gradient(45deg, #568a85, #4a7a75);
+}
+.card button:last-of-type {
+  background: linear-gradient(45deg, #d97a2a, #c66a1a);
+  color: white;
+}
+.card button:last-of-type:hover {
+  background: linear-gradient(45deg, #b35d20, #a54d10);
+}
+/* ---------- cart / orders / profile / contact / about ---------- */
+#cart-items, .orders-list {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.cart-item, .order-item {
+  background:rgba(255,255,255,0.8);
+  border:1px solid rgba(0,0,0,0.1);
+  border-radius:8px;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.cart-item button {
+  background:linear-gradient(45deg, crimson, darkred);
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.cart-item button:hover { background: darkred; }
+#cart-total {
+  margin-top:16px;
+  font-size:1.2rem;
+  font-weight:700;
+  color:#2b2420;
+  text-align: center;
+  padding: 15px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 8px;
+}
+#orders {
+  max-width: 90vw;
+  margin: 0 auto;
+  padding: 25px;
+}
+#orders h2 {
+  text-align: center;
+  color: #2b2420;
+  font-family: Georgia, serif;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+.order-item p {
+  margin: 5px 0;
+  color: #3b332d;
+}
+#profile {
+  max-width:90vw;
+  margin:0 auto;
+  padding:25px;
+  background:rgba(255,255,255,0.8);
+  border-radius:15px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(255,255,255,0.3);
+}
+#profile h2 {
+  margin-top:0;
+  color:#2b2420;
+  text-align: center;
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+}
+.profile-row {
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.profile-row img {
+  width:100px;
+  height:100px;
+  object-fit:cover;
+  border-radius:12px;
+  border:3px solid #d4c8a8;
+  flex-shrink: 0;
+}
+.profile-row div { flex:1; min-width: 250px; }
+.profile-row input, #profile textarea {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #cfc4b3;
+  background:rgba(255,255,255,0.9);
+  box-sizing: border-box;
+  margin: 5px 0;
+}
+#saveProfileBtn, #deleteProfileBtn {
+  padding:12px 20px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  font-size: 1rem;
+  margin: 5px;
+}
+#saveProfileBtn {
+  background:linear-gradient(45deg, #6aa19a, #5a9a8a);
+  color:white;
+}
+#deleteProfileBtn {
+  background:linear-gradient(45deg, crimson, darkred);
+  color:white;
+}
+#contact { max-width: 90vw; margin: 0 auto; }
+#contact textarea {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cfc4b3;
+  min-height: 150px;
+  resize: vertical;
+  font-size: 1rem;
+  font-family: inherit;
+  background: rgba(255,255,255,0.8);
+  color: #2b2420;
+  box-sizing: border-box;
+  margin: 10px 0;
+}
+#contact input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #cfc4b3;
+  background: rgba(255,255,255,0.8);
+  box-sizing: border-box;
+  margin: 10px 0;
+}
+#contact button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(45deg, teal, darkcyan);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+#contact h2 {
+  font-size:1.6rem;
+  margin-bottom:12px;
+  text-align:center;
+  color:#2b2420;
+  font-family: Georgia, serif;
+}
+#about {
+  max-width:90vw;
+  margin:0 auto;
+  background:rgba(255,255,255,0.8);
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.1);
+}
+#about h2 {
+  text-align:center;
+  color:#2b2420;
+  font-family:Georgia,serif;
+}
+#about p {
+  line-height:1.6;
+  color:#3b332d;
+  text-align:justify;
+}
+/* ========== MOBILE RESPONSIVE ========== */
+@media (max-width:768px){
+  header { padding:10px 12px; }
+  header h2 { font-size:1rem; }
+  nav { gap:2px; }
+  nav a, .logout-btn { font-size:0.8rem; margin:1px 2px; padding:2px 4px; }
+  main { padding:70px 10px 20px; }
+  .home-hero, .home-search-section, .home-categories {
+    padding: 25px 20px;
+    margin-bottom: 15px;
+    max-width: 95vw;
+  }
+  #home h2 { font-size: 2.2rem; }
+  #home p { font-size: 1.1rem; padding: 0 10px; }
+  #searchInput {
+    width: 100%;
+    max-width: none;
+    padding: 16px 22px;
+  }
+  #voice-btn {
+    min-width: 55px;
+    height: 55px;
+    padding: 14px;
+  }
+  .category-options {
+    flex-wrap: nowrap;
+    gap: 10px;
+    padding: 0 5px;
+  }
+  .category-card {
+    min-width: 140px;
+    padding: 15px;
+  }
+  .category-card img {
+    width: 80px;
+    height: 80px;
+  }
+  .category-card h3 { font-size: 1rem; }
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+    padding: 15px;
+  }
+  .card {
+    padding: 12px;
+    max-height: 300px;
+    min-height: 260px;
+  }
+  .card img { height: 120px; }
+  .payment-content {
+    padding: 25px;
+    margin: 20px;
+  }
+}
+@media (max-width:480px){
+  .home-hero, .home-search-section, .home-categories {
+    padding: 20px 15px;
+    margin-bottom: 10px;
+  }
+  #home h2 { font-size: 1.8rem; }
+  #search-row {
+    flex-direction:column;
+    align-items:stretch;
+    gap:15px;
+    padding: 20px;
+  }
+  #searchInput { padding: 15px 20px; }
+  #voice-btn {
+    width: 100%;
+    height: 55px;
+    border-radius: 15px;
+  }
+  .category-options {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .category-card {
+    min-width: 120px;
+    padding: 12px;
+  }
+  .category-card img {
+    width: 70px;
+    height: 70px;
+  }
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .card {
+    max-height: 280px;
+    min-height: 240px;
+  }
+  .card img { height: 100px; }
+}
 </style>
 </head>
 <body>
-
+<!-- Payment Modal -->
+<div id="paymentModal">
+  <div class="payment-content">
+    <h3>🛒 Select Payment Method</h3>
+    <div class="payment-options">
+      <label class="payment-option">
+        <input type="radio" name="paymentMethod" value="COD" checked>
+        💰 Cash on Delivery
+      </label>
+      <label class="payment-option">
+        <input type="radio" name="paymentMethod" value="UPI">
+        📱 UPI / Google Pay / PhonePe
+      </label>
+      <label class="payment-option">
+        <input type="radio" name="paymentMethod" value="CARD">
+        💳 Credit/Debit Card
+      </label>
+      <label class="payment-option">
+        <input type="radio" name="paymentMethod" value="NETBANKING">
+        🏦 Net Banking
+      </label>
+    </div>
+    <button id="confirmPayment">✅ Confirm & Place Order</button>
+  </div>
+</div>
 <!-- Login/Register Forms -->
 <section id="login-container">
   <h2>Login</h2>
@@ -99,7 +744,6 @@ section.active { display:block; }
   </form>
   <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
 </section>
-
 <section id="register-container" style="display:none;">
   <h2>Register</h2>
   <form id="registerForm">
@@ -109,7 +753,6 @@ section.active { display:block; }
   </form>
   <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
 </section>
-
 <!-- Store Content -->
 <div id="store-content" style="display:none;">
 <header>
@@ -118,156 +761,289 @@ section.active { display:block; }
     <a href="#" onclick="showPage('home'); return false;">Home</a>
     <a href="#" onclick="showPage('products'); return false;">Products</a>
     <a href="#" onclick="showPage('cart'); return false;">Cart 🛒</a>
+    <a href="#" onclick="showPage('orders'); return false;">Orders</a>
+    <a href="#" onclick="showPage('profile'); return false;">Profile</a>
     <a href="#" onclick="showPage('about'); return false;">About</a>
     <a href="#" onclick="showPage('contact'); return false;">Contact</a>
     <span class="logout-btn" onclick="logout()">Logout</span>
   </nav>
 </header>
-
 <main>
+  <!-- Home - VERTICAL CONTAINERS WITH HORIZONTAL CATEGORY CARDS -->
   <section id="home" class="active">
-    <h2>Welcome to Vintage Store</h2>
-    <p>Choose your favorite category and explore timeless classics ✨</p>
-    <div class="category-options">
-      <div class="category-card" onclick="filterCategory('watches')">
-        <img src="https://www.shutterstock.com/image-photo/vintage-old-pocket-watch-600nw-552011227.jpg" alt="Watches">
-        <h3>Watches</h3>
+    <div class="home-hero">
+      <h2>Welcome to Vintage Store</h2>
+      <p>Discover timeless treasures and classic pieces that tell stories of elegance and craftsmanship</p>
+    </div>
+    <div class="home-search-section">
+      <div id="search-row">
+        <input type="text" id="searchInput" placeholder="Search vintage treasures..." />
+        <button id="voice-btn" title="Voice search">🎤</button>
       </div>
-      <div class="category-card" onclick="filterCategory('clocks')">
-        <img src="https://m.media-amazon.com/images/I/81Npl-U3l5L._UF894,1000_QL80_.jpg" alt="Clocks">
-        <h3>Clocks</h3>
+      <div id="search-not-found">
+        <h3>🔍 No Products Found</h3>
+        <p>Sorry, we couldn't find any vintage treasures matching "<span id="searchTerm"></span>". Try different keywords or browse our categories!</p>
       </div>
-      <div class="category-card" onclick="filterCategory('lights')">
-        <img src="https://content.jdmagicbox.com/v2/comp/firozabad/w2/9999p5612.5612.241230123800.v4w2/catalogue/glass-metal-craft-jagdamba-nagar-firozabad-chandelier-light-dealers-61jz9fdkil.jpg" alt="Lights">
-        <h3>Lights</h3>
+    </div>
+    <div class="home-categories">
+      <div class="category-options">
+        <div class="category-card" onclick="filterCategory('watches')">
+          <img src="https://www.levyjewelers.com/blog/upload/blog/1712690548_post_image.jpg" alt="Watches">
+          <h3>🕐 Watches</h3>
+        </div>
+        <div class="category-card" onclick="filterCategory('clocks')">
+          <img src="https://www.mayfairgallery.com/media/wysiwyg/clockface_main_image.jpg" alt="Clocks">
+          <h3>⏰ Clocks</h3>
+        </div>
+        <div class="category-card" onclick="filterCategory('lights')">
+          <img src="https://m.media-amazon.com/images/I/61y0NaPM6IL._UF894,1000_QL80_.jpg" alt="Lights">
+          <h3>💡 Lights</h3>
+        </div>
+        <div class="category-card" onclick="filterCategory('jewelry')">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2QPLomvn6SebJgx6byNUYGjb5oq_d4a2g2g&s" alt="Jewelry">
+          <h3>💍 Jewelry</h3>
+        </div>
+        <div class="category-card" onclick="filterCategory('decor')">
+          <img src="https://i.etsystatic.com/19608749/r/il/d3f45b/5348153606/il_570xN.5348153606_ll8n.jpg" alt="Decor">
+          <h3>🏺 Decor</h3>
+        </div>
+        <div class="category-card" onclick="filterCategory('furniture')">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=combn:ANd9GcSf24LbQG1qaCpUeuxWaLDk6-mTWvRj2sjZnA&s" alt="Furniture">
+          <h3>🪑 Furniture</h3>
+        </div>
       </div>
     </div>
   </section>
-
+  <!-- Products - SMALLER CARDS WITH MORE SPACING -->
   <section id="products">
-  <h2>Our Products</h2>
-  <div id="productsGrid" class="products-grid">
-
-    <!-- Watches -->
-    <div class="card" data-name="Handmade Watch" data-price="1200" data-category="watches">
-      <img src="https://img0.etsystatic.com/027/0/7172877/il_fullxfull.613412924_rr1t.jpg" alt="Watch">
-      <h3>Handmade Watch</h3>
-      <p>Price: ₹1200</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
+    <h2 style="text-align:center; margin:10px 0; color:#2b2420;">Our Vintage Collection</h2>
+    <div id="products-search-not-found">
+      <h3>🔍 No Products Found</h3>
+      <p>Sorry, we couldn't find any vintage treasures matching your search. Try different keywords!</p>
+      <button onclick="resetProductDisplay()">Browse All Products</button>
     </div>
-
-    <div class="card" data-name="Classic Leather Watch" data-price="1500" data-category="watches">
-      <img src="https://cdn.shopclues.com/images/thumbnails/41213/320/320/95689287948394988200470479217806722847465339034BROWNVINTAGEBUTTERFLY14060314941412532461142056189214335059191434823951144101439914667546031468670639.jpg" alt="Classic Leather Watch">
-      <h3>Classic Leather Watch</h3>
-      <p>Price: ₹1500</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
+    <div id="productsGrid" class="products-grid">
+      <!-- WATCHES -->
+      <div class="card" data-name="Vintage Pocket Watch" data-price="1800" data-category="watches">
+        <img src="https://thumbs.dreamstime.com/b/vintage-pocket-watch-antique-35091798.jpg" alt="Vintage Pocket Watch">
+        <h3>Vintage Pocket Watch</h3>
+        <p>Price: ₹1800</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Classic Wristwatch" data-price="2500" data-category="watches">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=combn:ANd9GcQoGeHgHhVPtCi1r0TdVvxNuei-I3qrNVjaIg&s" alt="Classic Wristwatch">
+        <h3>Classic Wristwatch</h3>
+        <p>Price: ₹2500</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Gold Pocket Watch" data-price="3500" data-category="watches">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=300&fit=crop" alt="Gold Pocket Watch">
+        <h3>Gold Pocket Watch</h3>
+        <p>Price: ₹3500</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <!-- CLOCKS -->
+      <div class="card" data-name="Antique Wall Clock" data-price="2800" data-category="clocks">
+        <img src="https://images.unsplash.com/photo-1581236009476-4e4a76bdceb9?w=300&h=300&fit=crop" alt="Antique Wall Clock">
+        <h3>Antique Wall Clock</h3>
+        <p>Price: ₹2800</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Vintage Mantel Clock" data-price="2200" data-category="clocks">
+        <img src="https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=300&h=300&fit=crop" alt="Vintage Mantel Clock">
+        <h3>Vintage Mantel Clock</h3>
+        <p>Price: ₹2200</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Antique Grandfather Clock" data-price="5000" data-category="clocks">
+        <img src="https://d2j6dbq0eux0bg.cloudfront.net/images/82961294/3364511338.jpg" alt="Antique Grandfather Clock">
+        <h3>Antique Grandfather Clock</h3>
+        <p>Price: ₹5000</p>
+        <label>Qty: <input type="number" value="1" min="1" max="5"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <!-- LIGHTS -->
+      <div class="card" data-name="Vintage Chandelier" data-price="4500" data-category="lights">
+        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&h=300&fit=crop" alt="Vintage Chandelier">
+        <h3>Vintage Chandelier</h3>
+        <p>Price: ₹4500</p>
+        <label>Qty: <input type="number" value="1" min="1" max="5"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Vintage Desk Lamp" data-price="2000" data-category="lights">
+        <img src="https://m.media-amazon.com/images/I/613lCI0xg6L.jpg" alt="Vintage Desk Lamp">
+        <h3>Vintage Desk Lamp</h3>
+        <p>Price: ₹2000</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <!-- JEWELRY -->
+      <div class="card" data-name="Vintage Necklace" data-price="1200" data-category="jewelry">
+        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=300&h=300&fit=crop" alt="Vintage Necklace">
+        <h3>Vintage Necklace</h3>
+        <p>Price: ₹1200</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Antique Brooch" data-price="900" data-category="jewelry">
+        <img src="https://images.unsplash.com/photo-1574169208507-84376144848b?w=300&h=300&fit=crop" alt="Antique Brooch">
+        <h3>Antique Brooch</h3>
+        <p>Price: ₹900</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Vintage Pearl Ring" data-price="1500" data-category="jewelry">
+        <img src="https://i.etsystatic.com/25082651/r/il/c1a635/2963817027/il_570xN.2963817027_lhlv.jpg" alt="Vintage Pearl Ring">
+        <h3>Vintage Pearl Ring</h3>
+        <p>Price: ₹1500</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <!-- DECOR -->
+      <div class="card" data-name="Antique Vase" data-price="1500" data-category="decor">
+        <img src="https://images.unsplash.com/photo-1558618047-3c8c76bdceb9?w=300&h=300&fit=crop" alt="Antique Vase">
+        <h3>Antique Vase</h3>
+        <p>Price: ₹1500</p>
+        <label>Qty: <input type="number" value="1" min="1" max="10"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Vintage Mirror" data-price="3200" data-category="decor">
+        <img src="https://images.unsplash.com/photo-1578683015141-3992171f4c89?w=300&h=300&fit=crop" alt="Vintage Mirror">
+        <h3>Vintage Mirror</h3>
+        <p>Price: ₹3200</p>
+        <label>Qty: <input type="number" value="1" min="1" max="5"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <!-- FURNITURE -->
+      <div class="card" data-name="Vintage Chair" data-price="8500" data-category="furniture">
+        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop" alt="Vintage Chair">
+        <h3>Vintage Chair</h3>
+        <p>Price: ₹8500</p>
+        <label>Qty: <input type="number" value="1" min="1" max="5"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
+      <div class="card" data-name="Antique Desk" data-price="12500" data-category="furniture">
+        <img src="https://images.unsplash.com/photo-1560185893-a55f7b2b2129?w=300&h=300&fit=crop" alt="Antique Desk">
+        <h3>Antique Desk</h3>
+        <p>Price: ₹12500</p>
+        <label>Qty: <input type="number" value="1" min="1" max="3"></label>
+        <div>
+          <button onclick="addToCart(this)">Add to Cart</button>
+          <button onclick="buyProduct(this)">Buy Now</button>
+        </div>
+      </div>
     </div>
-
-    <div class="card" data-name="Vintage Gold Watch" data-price="2500" data-category="watches">
-      <img src="https://i.etsystatic.com/7896385/r/il/b86ffb/5588632983/il_570xN.5588632983_7vdy.jpg" alt="Vintage Gold Watch">
-      <h3>Vintage Gold Watch</h3>
-      <p>Price: ₹2500</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
-    </div>
-
-    <!-- Clocks -->
-    <div class="card" data-name="Wooden Clock" data-price="2200" data-category="clocks">
-      <img src="https://arttales.in/cdn/shop/files/Bonded_Tops_Wall_Clock__1.jpg?v=1736769787&width=1946" alt="Clock">
-      <h3>Wooden Clock</h3>
-      <p>Price: ₹2200</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
-    </div>
-
-    <div class="card" data-name="Retro Metal Clock" data-price="2000" data-category="clocks">
-      <img src="https://5.imimg.com/data5/ANDROID/Default/2024/2/389626137/CS/FV/TC/3435492/product-jpeg.jpg" alt="Retro Metal Clock">
-      <h3>Retro Metal Clock</h3>
-      <p>Price: ₹2000</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
-    </div>
-
-    <div class="card" data-name="Antique Wall Clock" data-price="2600" data-category="clocks">
-      <img src="https://m.media-amazon.com/images/I/61H-wJdLSxL._UF894,1000_QL80_.jpg" alt="Antique Wall Clock">
-      <h3>Antique Wall Clock</h3>
-      <p>Price: ₹2600</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
-    </div>
-
-    <!-- Lights -->
-    <div class="card" data-name="Vintage Light" data-price="1800" data-category="lights">
-      <img src="https://images-cdn.ubuy.co.in/64ef835472399f1a867b7a66-wonder-garden-outdoor-string-lights-with.jpg" alt="Light">
-      <h3>Vintage Light</h3>
-      <p>Price: ₹1800</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
-    </div>
-
-    <div class="card" data-name="Rustic Pendant Light" data-price="2100" data-category="lights">
-      <img src="https://www.bulbsquare.com/cdn/shop/products/O1CN011dDNeS2A0d2TkGCYv___2210947598141-0-cib_720x.jpg?v=1739615949" alt="Rustic Pendant Light">
-      <h3>Rustic Pendant Light</h3>
-      <p>Price: ₹2100</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
-    </div>
-
-    <div class="card" data-name="Classic Lantern Light" data-price="1900" data-category="lights">
-      <img src="https://m.media-amazon.com/images/I/71AtYXI4V-L.jpg" alt="Classic Lantern Light">
-      <h3>Classic Lantern Light</h3>
-      <p>Price: ₹1900</p>
-      <label>Quantity: <input type="number" value="1" min="1"></label>
-      <button onclick="addToCart(this)">Add to Cart</button>
-      <button onclick="buyProduct(this)">Buy Now</button>
-    </div>
-
-  </div>
-</section>
-
-
+  </section>
+  <!-- Cart -->
   <section id="cart">
-    <h2>Your Cart</h2>
+    <h2 style="text-align:center; color:#2b2420;">Your Cart</h2>
     <div id="cart-items"></div>
     <p id="cart-total">Total: ₹0</p>
   </section>
-
-  <section id="about">
-    <h2>About our Vintage Store</h2>
-    <p>Step into Vintage Store, where every piece tells a timeless story.
-From classic watches and antique clocks to elegant lighting and décor, we bring the charm of the past to today’s lifestyle.
-Each product is carefully handpicked for its authenticity, quality, and craftsmanship.
-Enjoy a seamless shopping experience with secure online payments and fast doorstep delivery.
-Discover treasures that never fade — because style, like memories, never gets old.</p>
+  <!-- Orders -->
+  <section id="orders">
+    <h2>Your Orders</h2>
+    <div id="orders-list" class="orders-list"></div>
   </section>
-
-  <!-- Contact Page with Feedback -->
+  <!-- Profile -->
+  <section id="profile">
+    <h2>Your Profile</h2>
+    <div style="margin-bottom:15px; text-align:center; color:#666;" id="profileMessage"></div>
+    <div class="profile-row">
+      <img id="profilePicPreview" src="https://via.placeholder.com/100x100.png?text=👤" alt="Profile Pic">
+      <div>
+        <label style="display:block; margin-bottom:5px; font-weight:600;">Display Name</label>
+        <input id="profileDisplayName" placeholder="Enter your display name">
+        <label style="display:block; margin:15px 0 5px 0; font-weight:600;">Profile Image URL</label>
+        <input id="profilePhotoURL" placeholder="https://example.com/your-image.jpg">
+        <small style="color:#666; display:block; margin-top:5px;">Paste a direct image URL or leave blank</small>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button id="saveProfileBtn">💾 Save Profile</button>
+      <button id="deleteProfileBtn">🗑️ Delete Profile Data</button>
+    </div>
+  </section>
+  <!-- About -->
+  <section id="about">
+    <h2>About Vintage Store</h2>
+    <p style="line-height:1.6; color:#3b332d; text-align:justify;">
+      Step into <strong>Vintage Store</strong>, where every piece tells a timeless story of craftsmanship and elegance.
+      From exquisite watches and antique clocks to stunning lighting fixtures and heirloom jewelry, we curate
+      authentic vintage treasures that bring the charm of yesteryears into modern living.
+    </p>
+    <p style="line-height:1.6; color:#3b332d; text-align:justify;">
+      Each item in our collection is carefully handpicked for its historical significance, superior quality,
+      and unique character. We offer secure online payments, reliable shipping, and authentic vintage pieces
+      that become cherished heirlooms for generations.
+    </p>
+    <p style="text-align:center; font-style:italic; color:#5a3d2e;">
+      <em>"Timeless treasures that never fade — because true elegance endures."</em>
+    </p>
+  </section>
+  <!-- Contact -->
   <section id="contact">
     <h2>Contact Us</h2>
     <form id="contactForm">
-      <input type="text" id="contactName" placeholder="Your Name" required>
-      <input type="email" id="contactEmail" placeholder="Your Email" required>
-      <textarea id="contactMessage" placeholder="Message" required></textarea>
-      <button type="submit">Send</button>
-      <p>If any issues, email us at <strong>support@vintagestore.com</strong></p>
-      <p id="contactFeedback" style="color:green; font-weight:bold; display:none;"></p>
+      <input type="text" id="contactName" placeholder="Your Full Name" required>
+      <input type="email" id="contactEmail" placeholder="Your Email Address" required>
+      <textarea id="contactMessage" placeholder="Tell us about your query or vintage treasure you're looking for..." required></textarea>
+      <button type="submit">📧 Send Message</button>
+      <p style="text-align:center; margin-top:15px;">Or email us directly at <strong>support@vintagestore.com</strong></p>
+      <p id="contactFeedback" style="color:green; font-weight:bold; text-align:center; display:none;"></p>
     </form>
   </section>
 </main>
 </div>
-
 <script>
-// Firebase Configuration
+/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyA8xmP1860A5XtWzlFcIWqY1jSl3dN2cME",
   authDomain: "vintage-products-ce5dc.firebaseapp.com",
@@ -281,204 +1057,520 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Show Login/Register
-function showRegister(){ document.getElementById('login-container').style.display='none'; document.getElementById('register-container').style.display='block'; }
-function showLogin(){ document.getElementById('login-container').style.display='block'; document.getElementById('register-container').style.display='none'; }
+let cart = [];
+let currentProduct = null;
+let currentSearchTerm = '';
+let searchTimeout;
 
-// Firebase Auth
-document.getElementById('loginForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  const email=document.getElementById('email').value;
-  const password=document.getElementById('password').value;
-  auth.signInWithEmailAndPassword(email,password)
-      .then(()=> { document.getElementById('login-container').style.display='none'; document.getElementById('store-content').style.display='block'; })
-      .catch(err=>alert(err.message));
-});
-document.getElementById('registerForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  const email=document.getElementById('regEmail').value;
-  const password=document.getElementById('regPassword').value;
-  auth.createUserWithEmailAndPassword(email,password)
-      .then(()=>{ alert("Account created! Please login."); showLogin(); })
-      .catch(err=>alert(err.message));
-});
-
-// Logout
-function logout(){ auth.signOut().then(()=>{ alert("Logged out"); location.reload(); }); }
-
-// Store Functions
-let cart=[];
-let buyList=[];
-function showPage(pageId){
-  document.querySelectorAll("#store-content main section").forEach(sec=>sec.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
-  if(pageId==="cart") renderCart();
+/* PAYMENT MODAL FUNCTIONS */
+function showPaymentModal(productData) {
+  currentProduct = productData;
+  document.getElementById('paymentModal').classList.add('show');
 }
 
-// Add to Cart
-function addToCart(button){
-  const card=button.closest(".card");
-  const name=card.dataset.name;
-  const price=parseInt(card.dataset.price);
-  const qty=parseInt(card.querySelector("input").value);
-  const existing=cart.find(item=>item.name===name);
-  if(existing) existing.qty+=qty; else cart.push({name,price,qty});
-  alert(name+" added to cart!");
+function hidePaymentModal() {
+  document.getElementById('paymentModal').classList.remove('show');
+  currentProduct = null;
 }
 
-// Render Cart
-function renderCart(){
-  const cartDiv=document.getElementById("cart-items");
-  cartDiv.innerHTML="";
-  let total=0;
-  if(cart.length===0) cartDiv.innerHTML="<p>Your cart is empty.</p>";
-  else cart.forEach((item,index)=>{
-    total+=item.price*item.qty;
-    const div=document.createElement("div");
-    div.className="cart-item";
-    div.innerHTML=`<span>${item.name} (x${item.qty}) - ₹${item.price*item.qty}</span>
-                   <button onclick="removeFromCart(${index})">Remove</button>`;
-    cartDiv.appendChild(div);
+document.getElementById('confirmPayment').addEventListener('click', async () => {
+  if (!currentProduct) {
+    alert('No product selected. Please try again.');
+    return;
+  }
+  
+  const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+  if (!selectedPayment) {
+    alert('Please select a payment method!');
+    return;
+  }
+  
+  const paymentMethod = selectedPayment.value;
+  const qty = currentProduct.qty;
+  const total = currentProduct.price * qty;
+  
+  try {
+    // Show loading state
+    document.getElementById('confirmPayment').textContent = 'Processing...';
+    document.getElementById('confirmPayment').disabled = true;
+
+    // Save order to Firebase
+    await saveOrderToFirebase(currentProduct, qty, total, paymentMethod);
+    
+    // Show confirmation message
+    const successMsg = `
+✅ **Order Placed Successfully!**
+
+Product: ${currentProduct.name}
+Quantity: ${qty}
+Total: ₹${total}
+Payment Method: ${getPaymentMethodName(paymentMethod)}
+
+🎉 **Thank you for ordering with Vintage Store!**
+Your order will be processed within 24 hours.`;
+    
+    alert(successMsg);
+    
+    // Close modal and reset
+    hidePaymentModal();
+    
+    // Refresh Orders page if currently active
+    if (document.getElementById('orders').classList.contains('active')) {
+      await loadOrders();
+    }
+  } catch (error) {
+    console.error('Error placing order:', error);
+    alert('Failed to place order: ' + error.message);
+  } finally {
+    document.getElementById('confirmPayment').textContent = '✅ Confirm & Place Order';
+    document.getElementById('confirmPayment').disabled = false;
+  }
+});
+
+function getPaymentMethodName(method) {
+  const methods = {
+    'COD': 'Cash on Delivery',
+    'UPI': 'UPI Payment',
+    'CARD': 'Credit/Debit Card',
+    'NETBANKING': 'Net Banking'
+  };
+  return methods[method] || method;
+}
+
+async function saveOrderToFirebase(product, qty, total, paymentMethod) {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('You must be logged in to place an order. Please log in and try again.');
+    }
+    
+    const orderRef = await db.collection('orders').add({
+      userId: user.uid,
+      productName: product.name,
+      price: product.price,
+      quantity: qty,
+      total: total,
+      paymentMethod: paymentMethod,
+      orderDate: firebase.firestore.Timestamp.now(),
+      status: 'pending'
+    });
+    
+    console.log('Order saved to Firebase with ID:', orderRef.id);
+    return orderRef.id;
+  } catch (error) {
+    console.error('Error saving order:', error);
+    throw error;
+  }
+}
+
+/* UI Navigation */
+function showRegister() {
+  document.getElementById('login-container').style.display = 'none';
+  document.getElementById('register-container').style.display = 'block';
+}
+
+function showLogin() {
+  document.getElementById('login-container').style.display = 'block';
+  document.getElementById('register-container').style.display = 'none';
+}
+
+function showPage(pageId) {
+  document.querySelectorAll("#store-content main section").forEach(sec => sec.classList.remove("active"));
+  const el = document.getElementById(pageId);
+  if (el) {
+    el.classList.add("active");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (pageId === 'products') {
+      resetProductDisplay();
+    }
+    if (pageId === 'cart') renderCart();
+    if (pageId === 'orders') loadOrders();
+    if (pageId === 'profile') loadProfile();
+    if (pageId === 'home') {
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.value = '';
+        currentSearchTerm = '';
+      }
+    }
+  }
+  hidePaymentModal();
+}
+
+/* Auth Handlers */
+document.getElementById('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => {
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('store-content').style.display = 'block';
+    })
+    .catch(err => alert('Login failed: ' + err.message));
+});
+
+document.getElementById('registerForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      alert("Account created successfully! Please login.");
+      auth.signOut();
+      document.getElementById("regEmail").value = "";
+      document.getElementById("regPassword").value = "";
+      showLogin();
+    })
+    .catch(err => alert('Registration failed: ' + err.message));
+});
+
+function logout() {
+  auth.signOut().then(() => {
+    alert("Logged out successfully");
+    location.reload();
   });
-  document.getElementById("cart-total").innerText="Total: ₹"+total;
-}
-function removeFromCart(index){ cart.splice(index,1); renderCart(); }
-function filterCategory(category){ 
-  showPage('products'); 
-  document.querySelectorAll("#productsGrid .card").forEach(card=>{
-    card.style.display=(card.dataset.category===category)?"block":"none"; 
-  }); 
 }
 
-// Buy Now Functions
-function buyProduct(button){
+/* Search Functions */
+function searchProducts() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    currentSearchTerm = q;
+    const cards = document.querySelectorAll("#productsGrid .card");
+    let foundCount = 0;
+    
+    cards.forEach(card => {
+      const name = card.dataset.name.toLowerCase();
+      const category = card.dataset.category.toLowerCase();
+      const isMatch = q === '' || name.includes(q) || category.includes(q);
+      
+      if (isMatch) {
+        card.style.display = "block";
+        card.style.opacity = "1";
+        card.style.transform = "translateY(0)";
+        foundCount++;
+      } else {
+        card.style.display = "none";
+      }
+    });
+    
+    updateSearchMessages(q, foundCount);
+    if (foundCount > 0 && document.getElementById('home').classList.contains('active')) {
+      showPage('products');
+    }
+  }, 300);
+}
+
+function updateSearchMessages(query, foundCount) {
+  const notFoundMsg = document.getElementById('search-not-found');
+  const productsNotFoundMsg = document.getElementById('products-search-not-found');
+  const searchTermEl = document.getElementById('searchTerm');
+  
+  if (query) {
+    if (searchTermEl) searchTermEl.textContent = query;
+    
+    if (foundCount === 0) {
+      notFoundMsg?.classList.add('show');
+      productsNotFoundMsg?.classList.add('show');
+    } else {
+      notFoundMsg?.classList.remove('show');
+      productsNotFoundMsg?.classList.remove('show');
+    }
+  } else {
+    notFoundMsg?.classList.remove('show');
+    productsNotFoundMsg?.classList.remove('show');
+    resetProductDisplay();
+  }
+}
+
+function filterCategory(category) {
+  showPage('products');
+  const cards = document.querySelectorAll("#productsGrid .card");
+  let foundCount = 0;
+  
+  // Hide all cards first
+  cards.forEach(card => {
+    card.style.display = "none";
+  });
+  
+  // Show only matching category cards
+  cards.forEach(card => {
+    if (card.dataset.category.toLowerCase() === category.toLowerCase()) {
+      card.style.display = "block";
+      card.style.opacity = "1";
+      card.style.transform = "translateY(0)";
+      foundCount++;
+    }
+  });
+  
+  // Update search-related UI
+  document.getElementById('products-search-not-found')?.classList.remove('show');
+  document.getElementById('search-not-found')?.classList.remove('show');
+  
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.value = '';
+    currentSearchTerm = '';
+  }
+  
+  // Show not-found message if no products match
+  if (foundCount === 0) {
+    document.getElementById('products-search-not-found')?.classList.add('show');
+  }
+}
+
+function resetProductDisplay() {
+  const cards = document.querySelectorAll("#productsGrid .card");
+  cards.forEach(card => {
+    card.style.display = "block";
+    card.style.opacity = "1";
+    card.style.transform = "translateY(0)";
+  });
+  
+  document.getElementById('products-search-not-found')?.classList.remove('show');
+  document.getElementById('search-not-found')?.classList.remove('show');
+  
+  if (currentSearchTerm) {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    currentSearchTerm = '';
+  }
+}
+
+/* Cart Functions */
+function addToCart(button) {
   const card = button.closest(".card");
   const name = card.dataset.name;
   const price = parseInt(card.dataset.price);
-  const qty = parseInt(card.querySelector("input").value);
-
-  const existing = buyList.find(item => item.name === name);
-  if(existing) existing.qty += qty; 
-  else buyList.push({name, price, qty});
-
-  showBuySummary();
-}
-function showBuySummary(){
-  document.querySelectorAll("#store-content main section").forEach(sec => sec.classList.remove("active"));
-  let summarySection = document.getElementById("buy-summary");
-  if(!summarySection){
-    summarySection = document.createElement("section");
-    summarySection.id = "buy-summary";
-    summarySection.innerHTML = `
-      <h2>Buy Summary</h2>
-      <div id="buy-items"></div>
-      <p id="buy-total"></p>
-      <h3>Payment Options</h3>
-      <button onclick="pay('Online')">Online Payment</button>
-      <button onclick="pay('Offline')">Offline Payment</button>`;
-    document.querySelector("main").appendChild(summarySection);
+  const qty = parseInt(card.querySelector("input").value) || 1;
+  
+  const existing = cart.find(item => item.name === name);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({ name, price, qty });
   }
-  summarySection.classList.add("active");
+  alert(`${name} (${qty}x) added to cart!`);
+  renderCart();
+}
 
-  const buyDiv = document.getElementById("buy-items");
-  buyDiv.innerHTML = "";
+function renderCart() {
+  const cartDiv = document.getElementById("cart-items");
+  cartDiv.innerHTML = "";
   let total = 0;
-  buyList.forEach(item => {
+  
+  if (cart.length === 0) {
+    cartDiv.innerHTML = "<p style='text-align:center; color:#666;'>Your cart is empty. Start shopping!</p>";
+  } else {
+    cart.forEach((item, index) => {
       total += item.price * item.qty;
       const div = document.createElement("div");
       div.className = "cart-item";
-      div.innerHTML = `${item.name} (x${item.qty}) - ₹${item.price * item.qty}`;
-      buyDiv.appendChild(div);
-  });
-  document.getElementById("buy-total").innerText = `Total: ₹${total}`;
+      div.innerHTML = `
+        <div>
+          <strong>${item.name}</strong><br>
+          <small>Qty: ${item.qty} × ₹${item.price} = ₹${item.price * item.qty}</small>
+        </div>
+        <button onclick="removeFromCart(${index})">Remove</button>
+      `;
+      cartDiv.appendChild(div);
+    });
+  }
+  
+  document.getElementById("cart-total").innerText = `Total: ₹${total}`;
 }
-// Updated Payment Function with clickable options
-function pay(method) {
-  if (method === 'Online') {
-    // Create popup overlay
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.background = 'rgba(0,0,0,0.5)';
-    modal.style.display = 'flex';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.zIndex = '2000';
 
-    // Add payment buttons
-    modal.innerHTML = `
-      <div style="
-        background:white; 
-        padding:30px; 
-        border-radius:15px; 
-        text-align:center; 
-        max-width:350px; 
-        box-shadow:0 6px 15px rgba(0,0,0,0.2);
-      ">
-        <h3>Choose Payment Method</h3>
-        <button style="margin:10px; padding:10px 20px; background:#4285f4; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="completePayment('GPay')">GPay</button>
-        <button style="margin:10px; padding:10px 20px; background:#0f9d58; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="completePayment('Paytm')">Paytm</button>
-        <button style="margin:10px; padding:10px 20px; background:#ff5722; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="completePayment('Razorpay')">Razorpay</button>
-        <br><br>
-        <button style="padding:8px 15px; background:gray; color:white; border:none; border-radius:5px; cursor:pointer;" onclick="document.body.removeChild(this.parentElement.parentElement)">Cancel</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  } 
-  else {
-    alert("You chose offline payment. Your order is placed! Thanks for buying!");
-    buyList = [];
-    showPage('home');
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+/* Buy Function */
+function buyProduct(button) {
+  const card = button.closest(".card");
+  const name = card.dataset.name;
+  const price = parseInt(card.dataset.price);
+  const qty = parseInt(card.querySelector("input").value) || 1;
+  
+  const productData = { name, price, qty };
+  showPaymentModal(productData);
+}
+
+/* Orders Function */
+async function loadOrders() {
+  const ordersDiv = document.getElementById('orders-list');
+  ordersDiv.innerHTML = '<p>Loading orders...</p>';
+  const user = auth.currentUser;
+  
+  if (!user) {
+    ordersDiv.innerHTML = '<p style="text-align:center; color:#666;">Please log in to view your orders.</p>';
+    return;
+  }
+
+  try {
+    const querySnapshot = await db.collection('orders')
+      .where('userId', '==', user.uid)
+      .orderBy('orderDate', 'desc')
+      .get();
+    
+    console.log('Orders fetched:', querySnapshot.size, 'documents');
+    ordersDiv.innerHTML = '';
+    
+    if (querySnapshot.empty) {
+      ordersDiv.innerHTML = '<p style="text-align:center; color:#666;">No orders yet.</p>';
+      return;
+    }
+
+    querySnapshot.forEach(doc => {
+      const order = doc.data();
+      console.log('Order data:', order);
+      const div = document.createElement('div');
+      div.className = 'order-item';
+      div.innerHTML = `
+        <div>
+          <strong>${order.productName}</strong><br>
+          <p>Quantity: ${order.quantity}</p>
+          <p>Total: ₹${order.total}</p>
+          <p>Payment Method: ${getPaymentMethodName(order.paymentMethod)}</p>
+          <p>Status: ${order.status}</p>
+          <p>Order Date: ${order.orderDate.toDate().toLocaleString()}</p>
+        </div>
+      `;
+      ordersDiv.appendChild(div);
+    });
+  } catch (error) {
+    console.error('Error loading orders:', error);
+    ordersDiv.innerHTML = `<p style="text-align:center; color:red;">Error loading orders: ${error.message}</p>`;
   }
 }
 
-// Handle payment completion
-function completePayment(option) {
-  alert(`✅ Payment successful via ${option}! Thanks for buying!`);
-  // Close popup
-  document.querySelectorAll('body > div').forEach(div => {
-    if (div.style && div.style.position === 'fixed') div.remove();
-  });
-  buyList = [];
-  showPage('home');
+/* Profile Functions */
+function loadProfile() {
+  const messageEl = document.getElementById('profileMessage');
+  messageEl.textContent = 'Profile features coming soon!';
 }
 
-// Auto check auth state
-auth.onAuthStateChanged(user=>{
-  if(user){ document.getElementById('login-container').style.display='none'; document.getElementById('store-content').style.display='block'; }
-  else { document.getElementById('login-container').style.display='block'; document.getElementById('store-content').style.display='none'; }
+document.getElementById('saveProfileBtn').addEventListener('click', () => {
+  alert('Profile saved! (Feature coming soon)');
 });
 
-// Contact Form Submission with success message
-document.getElementById("contactForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+document.getElementById('deleteProfileBtn').addEventListener('click', () => {
+  if (confirm('Are you sure you want to delete your profile data?')) {
+    alert('Profile deleted! (Feature coming soon)');
+  }
+});
 
-  const name = document.getElementById("contactName").value;
-  const email = document.getElementById("contactEmail").value;
-  const message = document.getElementById("contactMessage").value;
-  const feedback = document.getElementById("contactFeedback");
+/* Voice Search */
+const voiceBtn = document.getElementById('voice-btn');
+let recognition;
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-IN';
 
-  db.collection("queries").add({
-    name: name,
-    email: email,
-    message: message,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(() => {
-    feedback.innerText = "✅ Your query has been submitted successfully!";
-    feedback.style.display = "block";
-    document.getElementById("contactForm").reset();
-    setTimeout(() => { feedback.style.display = "none"; }, 5000);
-  })
-  .catch(error => {
-    feedback.innerText = "❌ Error submitting query: " + error.message;
-    feedback.style.color = "red";
-    feedback.style.display = "block";
-    setTimeout(() => { feedback.style.display = "none"; feedback.style.color = "green"; }, 5000);
+  recognition.onstart = () => {
+    voiceBtn.classList.add('listening');
+    voiceBtn.innerText = '🔴';
+  };
+  recognition.onend = () => {
+    voiceBtn.classList.remove('listening');
+    voiceBtn.innerText = '🎤';
+  };
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    document.getElementById('searchInput').value = transcript;
+    searchProducts();
+  };
+  recognition.onerror = () => {
+    voiceBtn.classList.remove('listening');
+    voiceBtn.innerText = '🎤';
+    alert('Voice recognition error. Please try again.');
+  };
+}
+
+if (voiceBtn) {
+  voiceBtn.addEventListener('click', () => {
+    if (!recognition) {
+      alert('Voice search not supported. Use Chrome or Edge for best experience.');
+      return;
+    }
+    try {
+      recognition.start();
+    } catch (e) {
+      alert('Voice recognition failed. Please try again.');
+    }
   });
+}
+
+/* Contact Form */
+document.getElementById('contactForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('contactName').value;
+  const email = document.getElementById('contactEmail').value;
+  const message = document.getElementById('contactMessage').value;
+  
+  document.getElementById('contactFeedback').style.display = 'block';
+  document.getElementById('contactFeedback').textContent = 'Message sent successfully! We\'ll get back to you soon.';
+  
+  e.target.reset();
+  
+  setTimeout(() => {
+    document.getElementById('contactFeedback').style.display = 'none';
+  }, 5000);
+});
+
+/* Event Listeners */
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', searchProducts);
+    searchInput.addEventListener('keyup', searchProducts);
+    searchInput.addEventListener('search', searchProducts);
+    searchInput.addEventListener('focus', function() {
+      if (this.value === '') resetProductDisplay();
+    });
+  }
+  
+  resetProductDisplay();
+  
+  const browseAllBtn = document.querySelector('#products-search-not-found button');
+  if (browseAllBtn) {
+    browseAllBtn.addEventListener('click', resetProductDisplay);
+  }
+  
+  document.getElementById('paymentModal').addEventListener('click', (e) => {
+    if (e.target.id === 'paymentModal') {
+      hidePaymentModal();
+    }
+  });
+  
+  document.querySelectorAll('.payment-option input').forEach(radio => {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.payment-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      this.closest('.payment-option').classList.add('selected');
+    });
+  });
+});
+
+/* Auth State Listener */
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('register-container').style.display = 'none';
+    document.getElementById('store-content').style.display = 'block';
+    showPage('home');
+  } else {
+    document.getElementById('login-container').style.display = 'block';
+    document.getElementById('register-container').style.display = 'none';
+    document.getElementById('store-content').style.display = 'none';
+  }
 });
 </script>
 </body>
