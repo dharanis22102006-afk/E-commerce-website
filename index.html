@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <style>
-/* ---------- base with vintage background IMAGE ---------- */
+/* ---------- Base with vintage background IMAGE ---------- */
 body {
   font-family: 'Georgia', 'Times New Roman', serif;
   margin:0;
@@ -62,7 +61,34 @@ nav a:hover, .logout-btn:hover {
 main { padding:80px 15px 20px; }
 section { display:none; }
 section.active { display:block; }
-/* ---------- login/register ---------- */
+/* ---------- Notification Styling ---------- */
+#notification {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.9);
+  color: #2b2420;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 2000;
+  max-width: 90%;
+  text-align: center;
+  font-weight: 600;
+  display: none;
+  animation: fadeInOut 3s ease-in-out;
+}
+#notification.show {
+  display: block;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -10px); }
+  10% { opacity: 1; transform: translate(-50%, 0); }
+  90% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+/* ---------- Login/Register ---------- */
 #login-container, #register-container {
   max-width:400px;
   margin:100px auto;
@@ -117,10 +143,10 @@ section.active { display:block; }
 .home-hero, .home-search-section, .home-categories {
   width: 100%;
   max-width: 1200px;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.2);
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-  border: 2px solid rgba(255,255,255,0.6);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  border: 2px solid rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
   box-sizing: border-box;
   text-align: center;
@@ -244,8 +270,8 @@ section.active { display:block; }
   margin: 8px 0 0;
   font-size: 1.2rem;
 }
-/* PAYMENT MODAL */
-#paymentModal {
+/* ORDER MODAL (Updated Payment Modal to Order Modal) */
+#orderModal {
   display: none;
   position: fixed;
   top: 0;
@@ -257,24 +283,50 @@ section.active { display:block; }
   justify-content: center;
   align-items: center;
 }
-#paymentModal.show {
+#orderModal.show {
   display: flex;
 }
-.payment-content {
+.order-content {
   background: rgba(255,255,255,0.8);
-  padding: 30px;
+  padding: 20px;
   border-radius: 20px;
-  max-width: 450px;
+  max-width: 400px;
   width: 90%;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   border: 2px solid rgba(255,255,255,0.8);
   backdrop-filter: blur(10px);
+  position: relative;
 }
-.payment-content h3 {
+.close-order-modal {
+  position: absolute;
+  top: px8;
+  right: 12px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #2b2420;
+}
+.close-order-modal:hover {
+  color: #d9534f;
+}
+.order-content h3 {
   color: #2b2420;
   margin-bottom: 20px;
   font-family: Georgia, serif;
+}
+.order-details input, .order-details textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: 1px solid #d4c8a8;
+  background: rgba(255,255,255,0.9);
+  box-sizing: border-box;
+  font-size: 0.9rem;
+}
+.order-details textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 .payment-options {
   display: flex;
@@ -283,7 +335,7 @@ section.active { display:block; }
   margin: 20px 0;
 }
 .payment-option {
-  padding: 15px;
+  padding: 8px;
   border: 2px solid #d4c8a8;
   border-radius: 12px;
   cursor: pointer;
@@ -299,17 +351,17 @@ section.active { display:block; }
 .payment-option input[type="radio"] {
   margin-right: 10px;
 }
-#confirmPayment {
+#confirmOrder {
   background: linear-gradient(45deg, #28a745, #20c997);
   color: white;
   border: none;
-  padding: 12px 30px;
+  padding: 8px 20px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
   margin-top: 15px;
 }
-#confirmPayment:hover {
+#confirmOrder:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(40,167,69,0.3);
 }
@@ -441,7 +493,7 @@ section.active { display:block; }
 .card button:last-of-type:hover {
   background: linear-gradient(45deg, #b35d20, #a54d10);
 }
-/* ---------- cart / orders / profile / contact / about ---------- */
+/* ---------- Cart / Orders / Profile / Contact / About ---------- */
 #cart-items, .orders-list {
   display:flex;
   flex-direction:column;
@@ -468,6 +520,17 @@ section.active { display:block; }
   cursor:pointer;
 }
 .cart-item button:hover { background: darkred; }
+.order-item button.cancel-order {
+  background:linear-gradient(45deg, #d9534f, #c9302c);
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.order-item button.cancel-order:hover {
+  background: #c9302c;
+}
 #cart-total {
   margin-top:16px;
   font-size:1.2rem;
@@ -477,6 +540,22 @@ section.active { display:block; }
   padding: 15px;
   background: rgba(255,255,255,0.8);
   border-radius: 8px;
+}
+#cart-buy-now {
+  background: linear-gradient(45deg, #d97a2a, #c66a1a);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin: 10px auto;
+  display: block;
+}
+#cart-buy-now:hover {
+  background: linear-gradient(45deg, #b35d20, #a54d10);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 #orders {
   max-width: 90vw;
@@ -661,7 +740,7 @@ section.active { display:block; }
     min-height: 260px;
   }
   .card img { height: 120px; }
-  .payment-content {
+  .order-content {
     padding: 25px;
     margin: 20px;
   }
@@ -709,10 +788,23 @@ section.active { display:block; }
 </style>
 </head>
 <body>
-<!-- Payment Modal -->
-<div id="paymentModal">
-  <div class="payment-content">
-    <h3>🛒 Select Payment Method</h3>
+<!-- Notification -->
+<div id="notification"></div>
+<!-- Order Modal (Replaces Payment Modal) -->
+<div id="orderModal">
+  <div class="order-content">
+    <span class="close-order-modal" onclick="hideOrderModal()">&times;</span>
+    <h3>🛒 Place Your Order</h3>
+    <div class="order-details">
+      <label style="display:block; margin:10px 0 5px; font-weight:600;">Full Name</label>
+      <input type="text" id="orderName" placeholder="Enter your full name" required>
+      <label style="display:block; margin:10px 0 5px; font-weight:600;">Mobile Number</label>
+      <input type="tel" id="orderMobile" placeholder="Enter your mobile number" required>
+      <label style="display:block; margin:10px 0 5px; font-weight:600;">Shipping Address</label>
+      <textarea id="orderAddress" placeholder="Enter your full shipping address" required></textarea>
+      <label style="display:block; margin:10px 0 5px; font-weight:600;">Pincode</label>
+      <input type="text" id="orderPincode" placeholder="Enter your pincode" required>
+    </div>
     <div class="payment-options">
       <label class="payment-option">
         <input type="radio" name="paymentMethod" value="COD" checked>
@@ -731,7 +823,7 @@ section.active { display:block; }
         🏦 Net Banking
       </label>
     </div>
-    <button id="confirmPayment">✅ Confirm & Place Order</button>
+    <button id="confirmOrder">✅ Confirm & Place Order</button>
   </div>
 </div>
 <!-- Login/Register Forms -->
@@ -808,7 +900,7 @@ section.active { display:block; }
           <h3>🏺 Decor</h3>
         </div>
         <div class="category-card" onclick="filterCategory('furniture')">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=combn:ANd9GcSf24LbQG1qaCpUeuxWaLDk6-mTWvRj2sjZnA&s" alt="Furniture">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSf24LbQG1qaCpUeuxWaLDk6-mTWvRj2sjZnA&s" alt="Furniture">
           <h3>🪑 Furniture</h3>
         </div>
       </div>
@@ -835,7 +927,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Classic Wristwatch" data-price="2500" data-category="watches">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=combn:ANd9GcQoGeHgHhVPtCi1r0TdVvxNuei-I3qrNVjaIg&s" alt="Classic Wristwatch">
+        <img src="https://m.media-amazon.com/images/I/71ZsdaCEMYL._UY1000_.jpg" alt="Classic Wristwatch">
         <h3>Classic Wristwatch</h3>
         <p>Price: ₹2500</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -845,7 +937,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Gold Pocket Watch" data-price="3500" data-category="watches">
-        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=300&fit=crop" alt="Gold Pocket Watch">
+        <img src="https://eragem.com/media/catalog/product/cache/e4507427afc9429093d76362a19cfadc/7/4/74596a.jpg" alt="Gold Pocket Watch">
         <h3>Gold Pocket Watch</h3>
         <p>Price: ₹3500</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -856,7 +948,7 @@ section.active { display:block; }
       </div>
       <!-- CLOCKS -->
       <div class="card" data-name="Antique Wall Clock" data-price="2800" data-category="clocks">
-        <img src="https://images.unsplash.com/photo-1581236009476-4e4a76bdceb9?w=300&h=300&fit=crop" alt="Antique Wall Clock">
+        <img src="https://rukminim2.flixcart.com/image/480/640/kvpklu80/wall-decoration/9/l/n/metal-vintage-round-ship-antique-wall-clock-with-showpiece-original-imag8jyaa6k5hbtw.jpeg?q=90" alt="Antique Wall Clock">
         <h3>Antique Wall Clock</h3>
         <p>Price: ₹2800</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -866,7 +958,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Vintage Mantel Clock" data-price="2200" data-category="clocks">
-        <img src="https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=300&h=300&fit=crop" alt="Vintage Mantel Clock">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTepuTnmz7qsAelBdCVD0AiYElB56EMHy4Gbg&s" alt="Vintage Mantel Clock">
         <h3>Vintage Mantel Clock</h3>
         <p>Price: ₹2200</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -876,7 +968,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Antique Grandfather Clock" data-price="5000" data-category="clocks">
-        <img src="https://d2j6dbq0eux0bg.cloudfront.net/images/82961294/3364511338.jpg" alt="Antique Grandfather Clock">
+        <img src="https://www.suburbanclock.com/cdn/shop/files/s-l1600_1800x1800_6421374b-eab1-4ee0-921e-467854ab0e63_900x.jpg?v=1722656195" alt="Antique Grandfather Clock">
         <h3>Antique Grandfather Clock</h3>
         <p>Price: ₹5000</p>
         <label>Qty: <input type="number" value="1" min="1" max="5"></label>
@@ -887,7 +979,7 @@ section.active { display:block; }
       </div>
       <!-- LIGHTS -->
       <div class="card" data-name="Vintage Chandelier" data-price="4500" data-category="lights">
-        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&h=300&fit=crop" alt="Vintage Chandelier">
+        <img src="https://m.media-amazon.com/images/I/71JbfQ0RUyL.jpg" alt="Vintage Chandelier">
         <h3>Vintage Chandelier</h3>
         <p>Price: ₹4500</p>
         <label>Qty: <input type="number" value="1" min="1" max="5"></label>
@@ -897,7 +989,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Vintage Desk Lamp" data-price="2000" data-category="lights">
-        <img src="https://m.media-amazon.com/images/I/613lCI0xg6L.jpg" alt="Vintage Desk Lamp">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDs4_QpCzTX8xUH9CMGUc5fszG2EnnMYLBJw&s" alt="Vintage Desk Lamp">
         <h3>Vintage Desk Lamp</h3>
         <p>Price: ₹2000</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -908,7 +1000,7 @@ section.active { display:block; }
       </div>
       <!-- JEWELRY -->
       <div class="card" data-name="Vintage Necklace" data-price="1200" data-category="jewelry">
-        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=300&h=300&fit=crop" alt="Vintage Necklace">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGLk50KOSM2bGylljSKB5BDGYO1nC8u4o4Cw&s" alt="Vintage Necklace">
         <h3>Vintage Necklace</h3>
         <p>Price: ₹1200</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -918,7 +1010,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Antique Brooch" data-price="900" data-category="jewelry">
-        <img src="https://images.unsplash.com/photo-1574169208507-84376144848b?w=300&h=300&fit=crop" alt="Antique Brooch">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNknYiAyUeLx3fP402H_DpBKESu5YOgdXBBw&s" alt="Antique Brooch">
         <h3>Antique Brooch</h3>
         <p>Price: ₹900</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -928,7 +1020,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Vintage Pearl Ring" data-price="1500" data-category="jewelry">
-        <img src="https://i.etsystatic.com/25082651/r/il/c1a635/2963817027/il_570xN.2963817027_lhlv.jpg" alt="Vintage Pearl Ring">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyinCd4cuWiXkxHYZGrf0uP_kPyRpxCILPww&s" alt="Vintage Pearl Ring">
         <h3>Vintage Pearl Ring</h3>
         <p>Price: ₹1500</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -939,7 +1031,7 @@ section.active { display:block; }
       </div>
       <!-- DECOR -->
       <div class="card" data-name="Antique Vase" data-price="1500" data-category="decor">
-        <img src="https://images.unsplash.com/photo-1558618047-3c8c76bdceb9?w=300&h=300&fit=crop" alt="Antique Vase">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFr9rCE0sPZV54YEam5RHLxeRc5ht2d9gyCQ&s" alt="Antique Vase">
         <h3>Antique Vase</h3>
         <p>Price: ₹1500</p>
         <label>Qty: <input type="number" value="1" min="1" max="10"></label>
@@ -949,7 +1041,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Vintage Mirror" data-price="3200" data-category="decor">
-        <img src="https://images.unsplash.com/photo-1578683015141-3992171f4c89?w=300&h=300&fit=crop" alt="Vintage Mirror">
+        <img src="https://i.etsystatic.com/9272694/r/il/ef1fe0/1146621789/il_570xN.1146621789_mpmk.jpg" alt="Vintage Mirror">
         <h3>Vintage Mirror</h3>
         <p>Price: ₹3200</p>
         <label>Qty: <input type="number" value="1" min="1" max="5"></label>
@@ -960,7 +1052,7 @@ section.active { display:block; }
       </div>
       <!-- FURNITURE -->
       <div class="card" data-name="Vintage Chair" data-price="8500" data-category="furniture">
-        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop" alt="Vintage Chair">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3hfToP07ClfJQz1YgC3zrvaUxgZSoKvWp_A&s" alt="Vintage Chair">
         <h3>Vintage Chair</h3>
         <p>Price: ₹8500</p>
         <label>Qty: <input type="number" value="1" min="1" max="5"></label>
@@ -970,7 +1062,7 @@ section.active { display:block; }
         </div>
       </div>
       <div class="card" data-name="Antique Desk" data-price="12500" data-category="furniture">
-        <img src="https://images.unsplash.com/photo-1560185893-a55f7b2b2129?w=300&h=300&fit=crop" alt="Antique Desk">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKL3VEn6oOoLUfY5lWok7uxYSSW6L6C6uxGA&s" alt="Antique Desk">
         <h3>Antique Desk</h3>
         <p>Price: ₹12500</p>
         <label>Qty: <input type="number" value="1" min="1" max="3"></label>
@@ -986,6 +1078,7 @@ section.active { display:block; }
     <h2 style="text-align:center; color:#2b2420;">Your Cart</h2>
     <div id="cart-items"></div>
     <p id="cart-total">Total: ₹0</p>
+    <button id="cart-buy-now" style="display:none;">Buy Now</button>
   </section>
   <!-- Orders -->
   <section id="orders">
@@ -995,15 +1088,22 @@ section.active { display:block; }
   <!-- Profile -->
   <section id="profile">
     <h2>Your Profile</h2>
-    <div style="margin-bottom:15px; text-align:center; color:#666;" id="profileMessage"></div>
     <div class="profile-row">
       <img id="profilePicPreview" src="https://via.placeholder.com/100x100.png?text=👤" alt="Profile Pic">
       <div>
         <label style="display:block; margin-bottom:5px; font-weight:600;">Display Name</label>
         <input id="profileDisplayName" placeholder="Enter your display name">
+        <label style="display:block; margin:15px 0 5px 0; font-weight:600;">Email (cannot be changed)</label>
+        <p id="profileEmail" style="padding:10px; background:#f5f5f5; border-radius:8px;">Loading...</p>
         <label style="display:block; margin:15px 0 5px 0; font-weight:600;">Profile Image URL</label>
         <input id="profilePhotoURL" placeholder="https://example.com/your-image.jpg">
         <small style="color:#666; display:block; margin-top:5px;">Paste a direct image URL or leave blank</small>
+        <label style="display:block; margin:15px 0 5px 0; font-weight:600;">Mobile Number</label>
+        <input id="profileMobile" placeholder="Enter your mobile number (required for orders)">
+        <label style="display:block; margin:15px 0 5px 0; font-weight:600;">Shipping Address</label>
+        <textarea id="profileAddress" placeholder="Enter your full shipping address (required for orders)" rows="4"></textarea>
+        <label style="display:block; margin:15px 0 5px 0; font-weight:600;">Pincode</label>
+        <input id="profilePincode" placeholder="Enter your pincode (required for orders)">
       </div>
     </div>
     <div style="text-align:center;">
@@ -1059,71 +1159,143 @@ const db = firebase.firestore();
 
 let cart = [];
 let currentProduct = null;
+let currentCartItems = null;
 let currentSearchTerm = '';
 let searchTimeout;
 
-/* PAYMENT MODAL FUNCTIONS */
-function showPaymentModal(productData) {
+/* Notification Function */
+function showNotification(message) {
+  const notification = document.getElementById('notification');
+  notification.textContent = message;
+  notification.classList.add('show');
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+}
+
+/* ORDER MODAL FUNCTIONS (Replaces Payment Modal) */
+async function showOrderModal(productData, cartItems) {
   currentProduct = productData;
-  document.getElementById('paymentModal').classList.add('show');
-}
+  currentCartItems = cartItems;
+  const modal = document.getElementById('orderModal');
+  const nameInput = document.getElementById('orderName');
+  const mobileInput = document.getElementById('orderMobile');
+  const addressInput = document.getElementById('orderAddress');
+  const pincodeInput = document.getElementById('orderPincode');
 
-function hidePaymentModal() {
-  document.getElementById('paymentModal').classList.remove('show');
-  currentProduct = null;
-}
-
-document.getElementById('confirmPayment').addEventListener('click', async () => {
-  if (!currentProduct) {
-    alert('No product selected. Please try again.');
-    return;
+  // Auto-fill from profile
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      const profileDoc = await db.collection('users').doc(user.uid).get();
+      if (profileDoc.exists) {
+        const profile = profileDoc.data();
+        nameInput.value = profile.displayName || '';
+        mobileInput.value = profile.mobileNumber || '';
+        addressInput.value = profile.address || '';
+        pincodeInput.value = profile.pincode || '';
+      }
+    } catch (error) {
+      console.error('Error loading profile for order:', error);
+    }
   }
-  
+
+  modal.classList.add('show');
+}
+
+function hideOrderModal() {
+  document.getElementById('orderModal').classList.remove('show');
+  currentProduct = null;
+  currentCartItems = null;
+}
+
+document.getElementById('confirmOrder').addEventListener('click', async () => {
   const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
   if (!selectedPayment) {
-    alert('Please select a payment method!');
+    showNotification('❌ Please select a payment method!');
     return;
   }
-  
+
+  const name = document.getElementById('orderName').value.trim();
+  const mobile = document.getElementById('orderMobile').value.trim();
+  const address = document.getElementById('orderAddress').value.trim();
+  const pincode = document.getElementById('orderPincode').value.trim();
   const paymentMethod = selectedPayment.value;
-  const qty = currentProduct.qty;
-  const total = currentProduct.price * qty;
-  
+
+  if (!name || !mobile || !address || !pincode) {
+    showNotification('❌ Please fill in all required fields (name, mobile, address, pincode).');
+    return;
+  }
+
   try {
     // Show loading state
-    document.getElementById('confirmPayment').textContent = 'Processing...';
-    document.getElementById('confirmPayment').disabled = true;
+    document.getElementById('confirmOrder').textContent = 'Processing...';
+    document.getElementById('confirmOrder').disabled = true;
 
-    // Save order to Firebase
-    await saveOrderToFirebase(currentProduct, qty, total, paymentMethod);
-    
-    // Show confirmation message
-    const successMsg = `
-✅ **Order Placed Successfully!**
+    let items = [];
+    let total = 0;
 
-Product: ${currentProduct.name}
-Quantity: ${qty}
-Total: ₹${total}
-Payment Method: ${getPaymentMethodName(paymentMethod)}
+    if (currentCartItems) {
+      // Process cart purchase
+      items = currentCartItems.map(item => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+        return { name: item.name, price: item.price, quantity: item.qty, subtotal: itemTotal };
+      });
+    } else if (currentProduct) {
+      // Process single product purchase
+      const itemTotal = currentProduct.price * currentProduct.qty;
+      total = itemTotal;
+      items = [{ name: currentProduct.name, price: currentProduct.price, quantity: currentProduct.qty, subtotal: itemTotal }];
+    } else {
+      showNotification('❌ No product or cart items selected. Please try again.');
+      return;
+    }
 
-🎉 **Thank you for ordering with Vintage Store!**
-Your order will be processed within 24 hours.`;
-    
-    alert(successMsg);
-    
-    // Close modal and reset
-    hidePaymentModal();
-    
-    // Refresh Orders page if currently active
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('You must be logged in to place an order. Please log in and try again.');
+    }
+
+    const orderRef = await db.collection('orders').add({
+      userId: user.uid,
+      items: items,
+      total: total,
+      paymentMethod: paymentMethod,
+      name: name,
+      mobile: mobile,
+      address: address,
+      pincode: pincode,
+      email: user.email,
+      orderDate: firebase.firestore.Timestamp.now(),
+      status: 'pending'
+    });
+
+    let productsList = items.map(item => `Product: ${item.name}, Qty: ${item.quantity}, Subtotal: ₹${item.subtotal}`).join('\n');
+
+    // Show confirmation notification
+    const successMsg = `✅ Order Placed Successfully!\nOrder ID: ${orderRef.id}\n${productsList}\nTotal: ₹${total}\nPayment Method: ${getPaymentMethodName(paymentMethod)}\n🎉 Thank you for ordering!`;
+    showNotification(successMsg);
+
+    // Clear cart if it was a cart purchase
+    if (currentCartItems) {
+      await clearCartInFirebase();
+      renderCart();
+    }
+
+    // Refresh Orders page
     if (document.getElementById('orders').classList.contains('active')) {
       await loadOrders();
     }
+    
+    // Close modal
+    hideOrderModal();
   } catch (error) {
     console.error('Error placing order:', error);
-    alert('Failed to place order: ' + error.message);
+    showNotification('❌ Failed to place order: ' + error.message);
   } finally {
-    document.getElementById('confirmPayment').textContent = '✅ Confirm & Place Order';
-    document.getElementById('confirmPayment').disabled = false;
+    document.getElementById('confirmOrder').textContent = '✅ Confirm & Place Order';
+    document.getElementById('confirmOrder').disabled = false;
   }
 });
 
@@ -1137,30 +1309,116 @@ function getPaymentMethodName(method) {
   return methods[method] || method;
 }
 
-async function saveOrderToFirebase(product, qty, total, paymentMethod) {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      throw new Error('You must be logged in to place an order. Please log in and try again.');
-    }
-    
-    const orderRef = await db.collection('orders').add({
-      userId: user.uid,
-      productName: product.name,
-      price: product.price,
-      quantity: qty,
-      total: total,
-      paymentMethod: paymentMethod,
-      orderDate: firebase.firestore.Timestamp.now(),
-      status: 'pending'
-    });
-    
-    console.log('Order saved to Firebase with ID:', orderRef.id);
-    return orderRef.id;
-  } catch (error) {
-    console.error('Error saving order:', error);
-    throw error;
+/* Cart Functions - Firebase Integration */
+async function loadCart() {
+  const user = auth.currentUser;
+  if (!user) {
+    cart = [];
+    return;
   }
+  
+  try {
+    const doc = await db.collection('carts').doc(user.uid).get();
+    if (doc.exists) {
+      cart = doc.data().items || [];
+    } else {
+      cart = [];
+    }
+  } catch (error) {
+    console.error('Error loading cart:', error);
+    cart = [];
+  }
+}
+
+async function saveCartToFirebase() {
+  const user = auth.currentUser;
+  if (!user) return;
+  
+  try {
+    await db.collection('carts').doc(user.uid).set({
+      items: cart,
+      lastUpdated: firebase.firestore.Timestamp.now()
+    });
+    console.log('Cart saved to Firebase');
+  } catch (error) {
+    console.error('Error saving cart:', error);
+  }
+}
+
+async function clearCartInFirebase() {
+  const user = auth.currentUser;
+  if (!user) return;
+  
+  try {
+    await db.collection('carts').doc(user.uid).delete();
+    cart = [];
+    console.log('Cart cleared in Firebase');
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+  }
+}
+
+function addToCart(button) {
+  const card = button.closest(".card");
+  const name = card.dataset.name;
+  const price = parseInt(card.dataset.price);
+  const qty = parseInt(card.querySelector("input").value) || 1;
+  
+  const existing = cart.find(item => item.name === name);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({ name, price, qty });
+  }
+  
+  saveCartToFirebase();
+  showNotification(`🛒 ${name} (${qty}x) added to cart!`);
+  renderCart();
+}
+
+function removeFromCart(index) {
+  const itemName = cart[index].name;
+  cart.splice(index, 1);
+  saveCartToFirebase();
+  showNotification(`🗑️ ${itemName} removed from cart.`);
+  renderCart();
+}
+
+function buyCartItems() {
+  if (cart.length === 0) {
+    showNotification('❌ Your cart is empty. Add items to purchase.');
+    return;
+  }
+  showOrderModal(null, cart);
+}
+
+function renderCart() {
+  const cartDiv = document.getElementById("cart-items");
+  const buyNowBtn = document.getElementById("cart-buy-now");
+  cartDiv.innerHTML = "";
+  let total = 0;
+  
+  if (cart.length === 0) {
+    cartDiv.innerHTML = "<p style='text-align:center; color:#666;'>Your cart is empty. Start shopping!</p>";
+    buyNowBtn.style.display = 'none';
+  } else {
+    cart.forEach((item, index) => {
+      total += item.price * item.qty;
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <div>
+          <strong>${item.name}</strong><br>
+          <small>Qty: ${item.qty} × ₹${item.price} = ₹${item.price * item.qty}</small>
+        </div>
+        <button onclick="removeFromCart(${index})">Remove</button>
+      `;
+      cartDiv.appendChild(div);
+    });
+    buyNowBtn.style.display = 'block';
+  }
+  
+  document.getElementById("cart-total").innerText = `Total: ₹${total}`;
 }
 
 /* UI Navigation */
@@ -1195,7 +1453,7 @@ function showPage(pageId) {
       }
     }
   }
-  hidePaymentModal();
+  hideOrderModal();
 }
 
 /* Auth Handlers */
@@ -1207,8 +1465,9 @@ document.getElementById('loginForm').addEventListener('submit', e => {
     .then(() => {
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('store-content').style.display = 'block';
+      loadCart();
     })
-    .catch(err => alert('Login failed: ' + err.message));
+    .catch(err => showNotification('❌ Login failed: ' + err.message));
 });
 
 document.getElementById('registerForm').addEventListener('submit', e => {
@@ -1217,18 +1476,19 @@ document.getElementById('registerForm').addEventListener('submit', e => {
   const password = document.getElementById('regPassword').value;
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
-      alert("Account created successfully! Please login.");
+      showNotification("✅ Account created successfully! Please login.");
       auth.signOut();
       document.getElementById("regEmail").value = "";
       document.getElementById("regPassword").value = "";
       showLogin();
     })
-    .catch(err => alert('Registration failed: ' + err.message));
+    .catch(err => showNotification('❌ Registration failed: ' + err.message));
 });
 
 function logout() {
   auth.signOut().then(() => {
-    alert("Logged out successfully");
+    showNotification("✅ Logged out successfully");
+    cart = [];
     location.reload();
   });
 }
@@ -1340,54 +1600,6 @@ function resetProductDisplay() {
   }
 }
 
-/* Cart Functions */
-function addToCart(button) {
-  const card = button.closest(".card");
-  const name = card.dataset.name;
-  const price = parseInt(card.dataset.price);
-  const qty = parseInt(card.querySelector("input").value) || 1;
-  
-  const existing = cart.find(item => item.name === name);
-  if (existing) {
-    existing.qty += qty;
-  } else {
-    cart.push({ name, price, qty });
-  }
-  alert(`${name} (${qty}x) added to cart!`);
-  renderCart();
-}
-
-function renderCart() {
-  const cartDiv = document.getElementById("cart-items");
-  cartDiv.innerHTML = "";
-  let total = 0;
-  
-  if (cart.length === 0) {
-    cartDiv.innerHTML = "<p style='text-align:center; color:#666;'>Your cart is empty. Start shopping!</p>";
-  } else {
-    cart.forEach((item, index) => {
-      total += item.price * item.qty;
-      const div = document.createElement("div");
-      div.className = "cart-item";
-      div.innerHTML = `
-        <div>
-          <strong>${item.name}</strong><br>
-          <small>Qty: ${item.qty} × ₹${item.price} = ₹${item.price * item.qty}</small>
-        </div>
-        <button onclick="removeFromCart(${index})">Remove</button>
-      `;
-      cartDiv.appendChild(div);
-    });
-  }
-  
-  document.getElementById("cart-total").innerText = `Total: ₹${total}`;
-}
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  renderCart();
-}
-
 /* Buy Function */
 function buyProduct(button) {
   const card = button.closest(".card");
@@ -1396,7 +1608,7 @@ function buyProduct(button) {
   const qty = parseInt(card.querySelector("input").value) || 1;
   
   const productData = { name, price, qty };
-  showPaymentModal(productData);
+  showOrderModal(productData, null);
 }
 
 /* Orders Function */
@@ -1429,149 +1641,153 @@ async function loadOrders() {
       console.log('Order data:', order);
       const div = document.createElement('div');
       div.className = 'order-item';
+      let itemsHtml = '';
+      if (order.items && order.items.length > 0) {
+        itemsHtml = order.items.map(item => `<p>${item.name} - Qty: ${item.quantity} - ₹${item.subtotal}</p>`).join('');
+      } else if (order.productName) {
+        // Backward compatibility for old single-item orders
+        itemsHtml = `<p>${order.productName} - Qty: ${order.quantity} - ₹${order.total}</p>`;
+      }
+      const cancelButton = order.status === 'pending' ? `<button class="cancel-order" onclick="cancelOrder('${doc.id}')">Cancel Order</button>` : '';
       div.innerHTML = `
         <div>
-          <strong>${order.productName}</strong><br>
-          <p>Quantity: ${order.quantity}</p>
+          <strong>Order ID: ${doc.id}</strong><br>
+          ${itemsHtml}
           <p>Total: ₹${order.total}</p>
           <p>Payment Method: ${getPaymentMethodName(order.paymentMethod)}</p>
           <p>Status: ${order.status}</p>
           <p>Order Date: ${order.orderDate.toDate().toLocaleString()}</p>
+          <p>Shipping to: ${order.name || 'N/A'}</p>
+          <p>Mobile: ${order.mobile || 'N/A'}</p>
+          <p>Email: ${order.email || 'N/A'}</p>
+          <p>Address: ${order.address || 'N/A'}</p>
+          <p>Pincode: ${order.pincode || 'N/A'}</p>
         </div>
+        ${cancelButton}
       `;
       ordersDiv.appendChild(div);
     });
   } catch (error) {
     console.error('Error loading orders:', error);
-    ordersDiv.innerHTML = `<p style="text-align:center; color:red;">Error loading orders: ${error.message}</p>`;
+    ordersDiv.innerHTML = `<p style="text-align:center; color:red;">Error loading orders: ${error.message}. Please check Firestore security rules in your Firebase console.</p>`;
+  }
+}
+
+async function cancelOrder(orderId) {
+  if (!confirm('Are you sure you want to cancel this order?')) return;
+
+  try {
+    await db.collection('orders').doc(orderId).update({
+      status: 'cancelled',
+      updatedAt: firebase.firestore.Timestamp.now()
+    });
+    showNotification('✅ Order cancelled successfully!');
+    await loadOrders();
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    showNotification('❌ Failed to cancel order: ' + error.message);
   }
 }
 
 /* Profile Functions */
-function loadProfile() {
-  const messageEl = document.getElementById('profileMessage');
-  messageEl.textContent = 'Profile features coming soon!';
-}
+async function loadProfile() {
+  const user = auth.currentUser;
+  if (!user) return;
 
-document.getElementById('saveProfileBtn').addEventListener('click', () => {
-  alert('Profile saved! (Feature coming soon)');
-});
+  document.getElementById('profileEmail').textContent = user.email;
 
-document.getElementById('deleteProfileBtn').addEventListener('click', () => {
-  if (confirm('Are you sure you want to delete your profile data?')) {
-    alert('Profile deleted! (Feature coming soon)');
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    if (doc.exists) {
+      const data = doc.data();
+      document.getElementById('profileDisplayName').value = data.displayName || '';
+      document.getElementById('profilePhotoURL').value = data.photoURL || '';
+      document.getElementById('profileMobile').value = data.mobileNumber || '';
+      document.getElementById('profileAddress').value = data.address || '';
+      document.getElementById('profilePincode').value = data.pincode || '';
+      document.getElementById('profilePicPreview').src = data.photoURL || 'https://via.placeholder.com/100x100.png?text=👤';
+    }
+  } catch (error) {
+    console.error('Error loading profile:', error);
   }
-});
-
-/* Voice Search */
-const voiceBtn = document.getElementById('voice-btn');
-let recognition;
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.lang = 'en-IN';
-
-  recognition.onstart = () => {
-    voiceBtn.classList.add('listening');
-    voiceBtn.innerText = '🔴';
-  };
-  recognition.onend = () => {
-    voiceBtn.classList.remove('listening');
-    voiceBtn.innerText = '🎤';
-  };
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    document.getElementById('searchInput').value = transcript;
-    searchProducts();
-  };
-  recognition.onerror = () => {
-    voiceBtn.classList.remove('listening');
-    voiceBtn.innerText = '🎤';
-    alert('Voice recognition error. Please try again.');
-  };
 }
 
-if (voiceBtn) {
-  voiceBtn.addEventListener('click', () => {
-    if (!recognition) {
-      alert('Voice search not supported. Use Chrome or Edge for best experience.');
-      return;
-    }
-    try {
-      recognition.start();
-    } catch (e) {
-      alert('Voice recognition failed. Please try again.');
-    }
-  });
+async function saveProfile() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const displayName = document.getElementById('profileDisplayName').value.trim();
+  const photoURL = document.getElementById('profilePhotoURL').value.trim();
+  const mobileNumber = document.getElementById('profileMobile').value.trim();
+  const address = document.getElementById('profileAddress').value.trim();
+  const pincode = document.getElementById('profilePincode').value.trim();
+
+  if (!displayName || !mobileNumber || !address || !pincode) {
+    showNotification('❌ Please fill in all required fields (name, mobile, address, pincode).');
+    return;
+  }
+
+  try {
+    await db.collection('users').doc(user.uid).set({
+      displayName,
+      photoURL,
+      mobileNumber,
+      address,
+      pincode,
+      updatedAt: firebase.firestore.Timestamp.now()
+    }, { merge: true });
+    showNotification('✅ Profile saved successfully!');
+    document.getElementById('profilePicPreview').src = photoURL || 'https://via.placeholder.com/100x100.png?text=👤';
+  } catch (error) {
+    showNotification('❌ Error saving profile: ' + error.message);
+  }
 }
 
-/* Contact Form */
+async function deleteProfileData() {
+  if (!confirm('Are you sure you want to delete your profile data? This action cannot be undone.')) return;
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    await db.collection('users').doc(user.uid).delete();
+    document.getElementById('profileDisplayName').value = '';
+    document.getElementById('profilePhotoURL').value = '';
+    document.getElementById('profileMobile').value = '';
+    document.getElementById('profileAddress').value = '';
+    document.getElementById('profilePincode').value = '';
+    document.getElementById('profilePicPreview').src = 'https://via.placeholder.com/100x100.png?text=👤';
+    showNotification('✅ Profile data deleted successfully.');
+  } catch (error) {
+    console.error('Error deleting profile:', error);
+    showNotification('❌ Error deleting profile: ' + error.message);
+  }
+}
+/* Event Listeners */
+document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+document.getElementById('deleteProfileBtn').addEventListener('click', deleteProfileData);
+document.getElementById('cart-buy-now').addEventListener('click', buyCartItems);
+document.getElementById('searchInput').addEventListener('input', searchProducts);
 document.getElementById('contactForm').addEventListener('submit', e => {
   e.preventDefault();
-  const name = document.getElementById('contactName').value;
-  const email = document.getElementById('contactEmail').value;
-  const message = document.getElementById('contactMessage').value;
-  
-  document.getElementById('contactFeedback').style.display = 'block';
-  document.getElementById('contactFeedback').textContent = 'Message sent successfully! We\'ll get back to you soon.';
-  
-  e.target.reset();
-  
-  setTimeout(() => {
-    document.getElementById('contactFeedback').style.display = 'none';
-  }, 5000);
+  showNotification('📧 Thank you for your message! We will get back to you soon.');
+  document.getElementById('contactForm').reset();
 });
-
-/* Event Listeners */
-document.addEventListener('DOMContentLoaded', function() {
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', searchProducts);
-    searchInput.addEventListener('keyup', searchProducts);
-    searchInput.addEventListener('search', searchProducts);
-    searchInput.addEventListener('focus', function() {
-      if (this.value === '') resetProductDisplay();
-    });
-  }
-  
-  resetProductDisplay();
-  
-  const browseAllBtn = document.querySelector('#products-search-not-found button');
-  if (browseAllBtn) {
-    browseAllBtn.addEventListener('click', resetProductDisplay);
-  }
-  
-  document.getElementById('paymentModal').addEventListener('click', (e) => {
-    if (e.target.id === 'paymentModal') {
-      hidePaymentModal();
-    }
-  });
-  
-  document.querySelectorAll('.payment-option input').forEach(radio => {
-    radio.addEventListener('change', function() {
-      document.querySelectorAll('.payment-option').forEach(opt => {
-        opt.classList.remove('selected');
-      });
-      this.closest('.payment-option').classList.add('selected');
-    });
-  });
-});
-
 /* Auth State Listener */
 auth.onAuthStateChanged(user => {
   if (user) {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('register-container').style.display = 'none';
     document.getElementById('store-content').style.display = 'block';
-    showPage('home');
+    loadCart();
+    if (document.getElementById('profile').classList.contains('active')) {
+      loadProfile();
+    }
   } else {
+    document.getElementById('store-content').style.display = 'none';
     document.getElementById('login-container').style.display = 'block';
     document.getElementById('register-container').style.display = 'none';
-    document.getElementById('store-content').style.display = 'none';
+    cart = [];
   }
 });
 </script>
-</body>
-</html>
