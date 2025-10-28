@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vintage Store</title>
+  <style>
+    /* Base styles with white background */
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      margin: 0;
+      background-color: #ffffff; /* Changed to white */
+      color: #1a1a1a; /* Dark gray text for high contrast */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    /* Page title */
+    h1 {
+      font-size: 2.8rem;
+      margin: 20px 0;
+      color: #000000; /* Black for strong visibility */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Softer shadow on white */
+      font-family: Georgia, serif;
+      letter-spacing: 1.5px;
+    }
+    /* Logo */
+    img {
+      width: 400px;
+      height: auto;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1)); /* Optional: subtle shadow for logo */
+    }
+    /* Description */
+    p {
+      font-size: 1.2rem;
+      color: #333333; /* Darker gray for readability */
+      line-height: 1.6;
+      margin-bottom: 30px;
+      max-width: 600px;
+    }
+    /* Login button */
+    button {
+      background: linear-gradient(45deg, #008080, #006666); /* Teal to dark teal */
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
+      background: linear-gradient(45deg, #006666, #008080);
+    }
+    /* Responsive design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      img {
+        width: 225px;
+      }
+      p {
+        font-size: 1.1rem;
+      }
+      button {
+        padding: 12px 25px;
+        font-size: 1rem;
+      }
+    }
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      img {
+        width: 180px;
+      }
+      p {
+        font-size: 1rem;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
+    .btn-icon {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}
+  </style>
+  
+</head>
+<body>
+  <img src="vintage store logo.png" alt="Vintage Store Logo">
+  <p>Discover timeless treasures and classic pieces that tell stories of elegance and craftsmanship.</p>
+  <button class="icon-btn" onclick="window.location.href='login.html'">
+  <img src="ca.png" alt="Shop icon" class="btn-icon">
+  Shop now
+</button>
+</body>
+</html>
